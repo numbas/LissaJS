@@ -15,13 +15,23 @@ Copyright 2011-13 Newcastle University
 */
 
 var LissaJS = window.LissaJS = (function() {
+
 var LissaJS = {};
 
+function formatString(str)
+{
+	var i=0;
+	for(var i=1;i<arguments.length;i++)
+	{
+		str=str.replace(/%s/,arguments[i]);
+	}
+	return str;
+}
 LissaJS.Error = function(message)
 {
 	this.name="LissaJS Error";
 	this.originalMessage = message;
-	this.message = R.apply(this,arguments);
+	this.message = formatString.apply(arguments);
 }
 LissaJS.Error.prototype = Error.prototype;
 LissaJS.Error.prototype.constructor = LissaJS.Error;
