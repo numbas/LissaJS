@@ -14,16 +14,17 @@ Copyright 2011-13 Newcastle University
    limitations under the License.
 */
 
-var LissaJS = window.LissaJS = (function() {
+window.LissaJS = (function() {
 
 var LissaJS = {};
 
-function formatString(str)
+function formatString(args)
 {
+	var str = args[0];
 	var i=0;
-	for(var i=1;i<arguments.length;i++)
+	for(var i=1;i<args.length;i++)
 	{
-		str=str.replace(/%s/,arguments[i]);
+		str=str.replace(/%s/,args[i]);
 	}
 	return str;
 }
@@ -31,7 +32,7 @@ LissaJS.Error = function(message)
 {
 	this.name="LissaJS Error";
 	this.originalMessage = message;
-	this.message = formatString.apply(arguments);
+	this.message = Array.prototype.join.call(arguments,' ');
 }
 LissaJS.Error.prototype = Error.prototype;
 LissaJS.Error.prototype.constructor = LissaJS.Error;
@@ -154,7 +155,7 @@ var util = LissaJS.util = {
 			case 'boolean':
 				return a.value==b.value;
 			default:
-				throw(new LissaJS.Error('util.equality not defined for type %s',a.type));
+				throw(new LissaJS.Error('util.equality not defined for type',a.type));
 		}
 	},
 
@@ -5286,5 +5287,5 @@ simplificationRules = nsimplificationRules;
 simplificationRules['all']=new jme.Ruleset(all,{});
 LissaJS.jme.builtinScope = new LissaJS.jme.Scope([LissaJS.jme.builtinScope,{rulesets: simplificationRules}]);
 
-return LissaJS;
+return LissaJS.jme;
 })();
