@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>LissaJS demo</title>
+
+		<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+
+		<!-- deps -->
+		<script src="http://cdnjs.cloudflare.com/ajax/libs/es5-shim/2.1.0/es5-shim.min.js"></script>
+
+		<script src="lissajs.js"></script>
+
+		<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+		<script src="demo.js"></script>
+
+		<style>
+			body {
+				font-family: sans-serif;
+				max-width: 600px;
+				margin: 0 auto;
+			}
+			a {
+				text-decoration: none;
+			}
+			#input {
+				font-size: 20px;
+				width: 100%;
+			}
+
+			#individual-rules label {
+				width: 33%;
+				float: left;
+				line-height: 1.7em;
+				font-size: 14px;
+				font-family: monospace;
+			}
+
+			.clearAfter:after {
+				clear: both;
+				content: '.';
+				height: 0;
+				visibility: hidden;
+				display: block;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>LissaJS demo</h1>
+		<p>LissaJS is a library for parsing, evaluating and rearranging algebraic expressions in JavaScript.</p>
+		<p><a href="https://github.com/numbas/LissaJ">Get the source from GitHub</a>.</p>
+		<div>
+			<h3>Maths</h3>
+			<p style="font-size:small"><a href="http://numbas-editor.readthedocs.org/en/latest/jme-reference.html" target="_blank">Function reference</a></p>
+			<input id="input" type="text" placeholder="Write a mathematical expression"/>
+		</div>
+		<div id="error" style="display:none;">
+			<h3>Error</h3>
+			<div class="content"></div>
+		</div>
+		<div id="preview" style="display:none;">
+			<h3>Preview</h3>
+			<div class="content"></div>
+		</div>
+		<div id="evaluated" style="display:none;">
+			<h3>Evaluated</h3>
+			<div class="content"></div>
+		</div>
+			<form id="simplification-rules" class="clearAfter">
+				<h4>Simplification rules</h4>
+				<p><label><input id="all-rules" type="checkbox"/>All rules</label></p>
+				<div id="individual-rules">
+					<label><input class="rule-checkbox" type="checkbox" name="unitFactor"/>unitFactor <a target="ruledoc" href="http://numbas-editor.readthedocs.org/en/latest/simplification.html#term-unitfactor">?</a></label>
+					<label><input class="rule-checkbox" type="checkbox" name="unitPower"/>unitPower <a target="ruledoc" href="http://numbas-editor.readthedocs.org/en/latest/simplification.html#term-unitfactor">?</a></label>
+					<label><input class="rule-checkbox" type="checkbox" name="unitDenominator"/>unitDenominator <a target="ruledoc" href="http://numbas-editor.readthedocs.org/en/latest/simplification.html#term-unitfactor">?</a></label>
+					<label><input class="rule-checkbox" type="checkbox" name="zeroFactor"/>zeroFactor <a target="ruledoc" href="http://numbas-editor.readthedocs.org/en/latest/simplification.html#term-unitfactor">?</a></label>
+					<label><input class="rule-checkbox" type="checkbox" name="zeroTerm"/>zeroTerm <a target="ruledoc" href="http://numbas-editor.readthedocs.org/en/latest/simplification.html#term-unitfactor">?</a></label>
+					<label><input class="rule-checkbox" type="checkbox" name="zeroPower"/>zeroPower <a target="ruledoc" href="http://numbas-editor.readthedocs.org/en/latest/simplification.html#term-unitfactor">?</a></label>
+					<label><input class="rule-checkbox" type="checkbox" name="noLeadingMinus"/>noLeadingMinus <a target="ruledoc" href="http://numbas-editor.readthedocs.org/en/latest/simplification.html#term-unitfactor">?</a></label>
+					<label><input class="rule-checkbox" type="checkbox" name="collectNumbers"/>collectNumbers <a target="ruledoc" href="http://numbas-editor.readthedocs.org/en/latest/simplification.html#term-unitfactor">?</a></label>
+					<label><input class="rule-checkbox" type="checkbox" name="simplifyFractions"/>simplifyFractions <a target="ruledoc" href="http://numbas-editor.readthedocs.org/en/latest/simplification.html#term-unitfactor">?</a></label>
+					<label><input class="rule-checkbox" type="checkbox" name="zeroBase"/>zeroBase <a target="ruledoc" href="http://numbas-editor.readthedocs.org/en/latest/simplification.html#term-unitfactor">?</a></label>
+					<label><input class="rule-checkbox" type="checkbox" name="constantsFirst"/>constantsFirst <a target="ruledoc" href="http://numbas-editor.readthedocs.org/en/latest/simplification.html#term-unitfactor">?</a></label>
+					<label><input class="rule-checkbox" type="checkbox" name="sqrtProducts"/>sqrtProducts <a target="ruledoc" href="http://numbas-editor.readthedocs.org/en/latest/simplification.html#term-unitfactor">?</a></label>
+					<label><input class="rule-checkbox" type="checkbox" name="sqrtDivision"/>sqrtDivision <a target="ruledoc" href="http://numbas-editor.readthedocs.org/en/latest/simplification.html#term-unitfactor">?</a></label>
+					<label><input class="rule-checkbox" type="checkbox" name="sqrtSquare"/>sqrtSquare <a target="ruledoc" href="http://numbas-editor.readthedocs.org/en/latest/simplification.html#term-unitfactor">?</a></label>
+					<label><input class="rule-checkbox" type="checkbox" name="trig"/>trig <a target="ruledoc" href="http://numbas-editor.readthedocs.org/en/latest/simplification.html#term-unitfactor">?</a></label>
+					<label><input class="rule-checkbox" type="checkbox" name="otherNumbers"/>otherNumbers <a target="ruledoc" href="http://numbas-editor.readthedocs.org/en/latest/simplification.html#term-unitfactor">?</a></label>
+				</div>
+			</form>
+	</body>
+</html>
