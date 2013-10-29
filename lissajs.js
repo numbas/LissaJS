@@ -2119,6 +2119,9 @@ var jme = LissaJS.jme = {
 
 	compile: function(expr,scope)
 	{
+		if(scope===undefined)
+			scope = LissaJS.jme.builtinScope;
+
 		expr+='';	//make sure expression is a string and not a number or anything like that
 
 		if(!expr.trim().length)
@@ -4001,6 +4004,9 @@ jme.display = {
 	//settings are also passed through to the texify function
 	exprToLaTeX: function(expr,ruleset,scope)
 	{
+		if(scope===undefined)
+			scope = LissaJS.jme.builtinScope;
+
 		if(!ruleset)
 			ruleset = simplificationRules.basic;
 		ruleset = jme.collectRuleset(ruleset,scope.rulesets);
