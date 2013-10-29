@@ -3,6 +3,8 @@ LissaJS
 
 A library for parsing, evaluating and rearranging algebraic expressions in JavaScript.
 
+LissaJS is a temporary name. It's meant to pun on "Lissajous", and follows the convention that every Javascript library's name ends in "JS", but apart from that it hasn't got much going for it. Suggestions of better names are welcome at [issue #1](https://github.com/numbas/LissaJS/issues/1).
+
 This is a spin-off of the [Numbas](https://github.com/numbas/Numbas) e-assessment system. It has no external dependencies, but the code's a bit of a mess at the moment.
 
 It's currently provided on a "do what you can with it" basis; we'll add examples and documentation later.
