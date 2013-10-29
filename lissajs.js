@@ -39,40 +39,35 @@ LissaJS.Error.prototype.constructor = LissaJS.Error;
 
 var util = LissaJS.util = {
 
-	// extend(A,B) - derive type B from A
-	// (class inheritance, really)
-	// A should be the constructor for the parent class
-	// B should be a constructor to be called after A's constructor is done.
-	// B's prototype supercedes A's.
-	// returns a constructor for the derived class
-	extend: function(a,b,extendMethods)
-	{ 
-		var c = function() 
-		{ 
-			a.apply(this,arguments);
-			b.apply(this,arguments);
-		};
+	//based on jQuery.extend, included here to remove the jQuery dependency
+	extend: function() {
+		var src, copy, name, options, 
+			target = arguments[0] || {},
+			i = 1,
+			length = arguments.length;
 
-		var x;
-		for(x in a.prototype)
-		{
-			c.prototype[x]=a.prototype[x];
-		}
-		for(x in b.prototype)
-		{
-			c.prototype[x]=b.prototype[x];
-		}
+		for ( ; i < length; i++ ) {
+			// Only deal with non-null/undefined values
+			if ( (options = arguments[ i ]) != null ) {
+				// Extend the base object
+				for ( name in options ) {
+					src = target[ name ];
+					copy = options[ name ];
 
-		if(extendMethods)
-		{
-			for(x in a.prototype)
-			{
-				if(typeof(a.prototype[x])=='function' && b.prototype[x])
-					c.prototype[x]=LissaJS.util.extend(a.prototype[x],b.prototype[x]);
+					// Prevent never-ending loop
+					if ( target === copy ) {
+						continue;
+					}
+
+					if ( copy !== undefined ) {
+						target[ name ] = copy;
+					}
+				}
 			}
 		}
 
-		return c;
+		// Return the modified object
+		return target;
 	},
 
 	//clone an array, with array elements copied too
@@ -204,7 +199,7 @@ var util = LissaJS.util = {
 	isNonemptyHTML: function(html) {
 		var d = document.createElement('div');
 		d.innerHTML = html;
-		return $(d).text().trim().length>0;
+		return d.innerText.trim().length>0;
 	},
 
 	//parse parameter as a boolean
@@ -2377,7 +2372,7 @@ var jme = LissaJS.jme = {
 		case 'boolean':
 			return new jme.types.TBool(v);
 		default:
-			if($.isArray(v)) {
+			if(Array.isArray(v)) {
 				v = v.map(jme.wrapValue);
 				return new jme.types.TList(v);
 			}
@@ -2398,7 +2393,7 @@ var displayFlags = {
 var ruleSort = util.sortBy('patternString');
 var Ruleset = jme.Ruleset = function(rules,flags) {
 	this.rules = rules;
-	this.flags = $.extend({},displayFlags,flags);
+	this.flags = util.extend(displayFlags,flags);
 }
 Ruleset.prototype = {
 	flagSet: function(flag) {
@@ -2412,7 +2407,7 @@ Ruleset.prototype = {
 
 function mergeRulesets(r1,r2) {
 	var rules = mergeArrays(r1.rules,r2.rules,ruleSort);
-	var flags = $.extend({},r1.flags,r2.flags);
+	var flags = util.extend(r1.flags,r2.flags);
 	return new Ruleset(rules, flags);
 }
 
@@ -2435,7 +2430,7 @@ var collectRuleset = jme.collectRuleset = function(set,scopeSets)
 		set = set.split(',');
 	}
 	else {
-		flags = $.extend(flags,set.flags);
+		flags = util.extend(flags,set.flags);
 		if(set.rules)
 			set = set.rules;
 	}
@@ -2460,7 +2455,7 @@ var collectRuleset = jme.collectRuleset = function(set,scopeSets)
 
 				var sub = collectRuleset(scopeSets[name],scopeSets);
 
-				flags = $.extend(flags,sub.flags);
+				flags = util.extend(flags,sub.flags);
 
 				scopeSets[name] = sub;
 				if(neg)
@@ -2501,7 +2496,7 @@ var Scope = jme.Scope = function(scopes) {
 	if(scopes===undefined)
 		return;
 
-	if(!$.isArray(scopes))
+	if(!Array.isArray(scopes))
 		scopes = [scopes];
 
 	for(var i=0;i<scopes.length;i++) {
@@ -2628,7 +2623,7 @@ TBool.doc = {
 }
 
 var THTML = types.THTML = types.html = function(html) {
-	this.value = $(html);
+	this.value = html;
 }
 THTML.prototype.type = 'html';
 THTML.doc = {
@@ -3045,8 +3040,22 @@ newBuiltin('id',[TNum],TMatrix, matrixmath.id, {doc: {usage: 'id(3)', descriptio
 newBuiltin('..', [TNum,TNum], TRange, math.defineRange, {doc: {usage: ['a..b','1..2'], description: 'Define a range', tags: ['interval']}});
 newBuiltin('#', [TRange,TNum], TRange, math.rangeSteps, {doc: {usage: ['a..b#c','0..1 # 0.1'], description: 'Set the step size for a range.'}}); 
 
-newBuiltin('html',[TString],THTML,function(html) { return $(html) }, {doc: {usage: ['html(\'<div>things</div>\')'], description: 'Parse HTML from a string', tags: ['element','node']}});
-newBuiltin('image',[TString],THTML,function(url){ return $('<img/>').attr('src',url); }, {doc: {usage: ['image(\'picture.png\')'], description: 'Load an image from the given URL', tags: ['element','image','html']}});
+newBuiltin('html',[TString],THTML,
+	function(html) { 
+		var node = document.createElement('div'); 
+		node.innerHTML = html; 
+		return node.children[0]; 
+	}, 
+	{doc: {usage: ['html(\'<div>things</div>\')'], description: 'Parse HTML from a string', tags: ['element','node']}}
+);
+newBuiltin('image',[TString],THTML,
+	function(url){ 
+		var img = document.createElement('img');
+		img.setAttribute('src',url);
+		return img;
+	}, 
+	{doc: {usage: ['image(\'picture.png\')'], description: 'Load an image from the given URL', tags: ['element','image','html']}}
+);
 
 newBuiltin('latex',[TString],TString,null,{
 	evaluate: function(args,scope) {
@@ -3743,27 +3752,31 @@ newBuiltin('list',[TMatrix],TList,null, {
 
 newBuiltin('table',[TList,TList],THTML,
 	function(data,headers) {
-		var table = $('<table/>');
+		var table = document.createElement('table');
 
-		var thead = $('<thead/>');
-		table.append(thead);
+		var thead = document.createElement('thead');
+		table.appendChild(thead);
 		for(var i=0;i<headers.length;i++) {
 			var cell = headers[i];
 			if(typeof cell=='number')
 				cell = LissaJS.math.niceNumber(cell);
-			thead.append($('<th/>').html(cell));
+			var th = document.createElement('th');
+			th.innerHTML = cell;
+			thead.appendChild(th);
 		}
 
-		var tbody=$('<tbody/>');
-		table.append(tbody);
+		var tbody = document.createElement('tbody');
+		table.appendChild(tbody);
 		for(var i=0;i<data.length;i++) {
-			var row = $('<tr/>');
-			tbody.append(row);
+			var row = document.createElement('tr');
+			tbody.appendChild(row);
 			for(var j=0;j<data[i].length;j++) {
 				var cell = data[i][j];
 				if(typeof cell=='number')
 					cell = LissaJS.math.niceNumber(cell);
-				row.append($('<td/>').html(cell));
+				var td = document.createElement('td');
+				td.innerHTML = cell;
+				row.appendChild(td);
 			}
 		}
 
@@ -3779,6 +3792,7 @@ newBuiltin('table',[TList,TList],THTML,
 		}
 	}
 );
+
 
 ///end of builtins
 
@@ -4922,7 +4936,7 @@ var treeToJME = jme.display.treeToJME = function(tree,settings)
 		var str = tok.value.replace(/\\/g,'\\\\').replace(/\\([{}])/g,'$1').replace(/\n/g,'\\n').replace(/"/g,'\\"').replace(/'/g,"\\'");
 		return '"'+str+'"';
 	case 'html':
-		var html = $(tok.value).clone().wrap('<div>').parent().html();
+		var html = tok.value.outerHTML;
 		html = html.replace(/"/g,'\\"');
 		return 'html("'+html+'")';
 	case 'boolean':
@@ -5287,5 +5301,5 @@ simplificationRules = nsimplificationRules;
 simplificationRules['all']=new jme.Ruleset(all,{});
 LissaJS.jme.builtinScope = new LissaJS.jme.Scope([LissaJS.jme.builtinScope,{rulesets: simplificationRules}]);
 
-return LissaJS.jme;
+return LissaJS;
 })();
