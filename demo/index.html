@@ -18,15 +18,35 @@
 				max-width: 600px;
 				margin: 0 auto;
 			}
-			input {
+			a {
+				text-decoration: none;
+			}
+			#input {
 				font-size: 20px;
 				width: 100%;
+			}
+
+			#individual-rules label {
+				width: 33%;
+				float: left;
+				line-height: 1.7em;
+				font-size: 14px;
+				font-family: monospace;
+			}
+
+			.clearAfter:after {
+				clear: both;
+				content: '.';
+				height: 0;
+				visibility: hidden;
+				display: block;
 			}
 		</style>
 	</head>
 	<body>
 		<div>
 			<h3>Maths</h3>
+			<p style="font-size:small"><a href="http://numbas-editor.readthedocs.org/en/latest/jme-reference.html" target="_blank">Function reference</a></p>
 			<input id="input" type="text" placeholder="Write a mathematical expression"/>
 		</div>
 		<div id="error" style="display:none;">
@@ -41,5 +61,27 @@
 			<h3>Evaluated</h3>
 			<div class="content"></div>
 		</div>
+			<form id="simplification-rules" class="clearAfter">
+				<h4>Simplification rules</h4>
+				<p><label><input id="all-rules" type="checkbox"/>All rules</label></p>
+				<div id="individual-rules">
+					<label><input class="rule-checkbox" type="checkbox" name="unitFactor"/><a target="ruledoc" href="http://numbas-editor.readthedocs.org/en/latest/simplification.html#term-unitfactor">unitFactor</a></label>
+					<label><input class="rule-checkbox" type="checkbox" name="unitPower"/><a target="ruledoc" href="http://numbas-editor.readthedocs.org/en/latest/simplification.html#term-unitfactor">unitPower</a></label>
+					<label><input class="rule-checkbox" type="checkbox" name="unitDenominator"/><a target="ruledoc" href="http://numbas-editor.readthedocs.org/en/latest/simplification.html#term-unitfactor">unitDenominator</a></label>
+					<label><input class="rule-checkbox" type="checkbox" name="zeroFactor"/><a target="ruledoc" href="http://numbas-editor.readthedocs.org/en/latest/simplification.html#term-unitfactor">zeroFactor</a></label>
+					<label><input class="rule-checkbox" type="checkbox" name="zeroTerm"/><a target="ruledoc" href="http://numbas-editor.readthedocs.org/en/latest/simplification.html#term-unitfactor">zeroTerm</a></label>
+					<label><input class="rule-checkbox" type="checkbox" name="zeroPower"/><a target="ruledoc" href="http://numbas-editor.readthedocs.org/en/latest/simplification.html#term-unitfactor">zeroPower</a></label>
+					<label><input class="rule-checkbox" type="checkbox" name="noLeadingMinus"/><a target="ruledoc" href="http://numbas-editor.readthedocs.org/en/latest/simplification.html#term-unitfactor">noLeadingMinus</a></label>
+					<label><input class="rule-checkbox" type="checkbox" name="collectNumbers"/><a target="ruledoc" href="http://numbas-editor.readthedocs.org/en/latest/simplification.html#term-unitfactor">collectNumbers</a></label>
+					<label><input class="rule-checkbox" type="checkbox" name="simplifyFractions"/><a target="ruledoc" href="http://numbas-editor.readthedocs.org/en/latest/simplification.html#term-unitfactor">simplifyFractions</a></label>
+					<label><input class="rule-checkbox" type="checkbox" name="zeroBase"/><a target="ruledoc" href="http://numbas-editor.readthedocs.org/en/latest/simplification.html#term-unitfactor">zeroBase</a></label>
+					<label><input class="rule-checkbox" type="checkbox" name="constantsFirst"/><a target="ruledoc" href="http://numbas-editor.readthedocs.org/en/latest/simplification.html#term-unitfactor">constantsFirst</a></label>
+					<label><input class="rule-checkbox" type="checkbox" name="sqrtProducts"/><a target="ruledoc" href="http://numbas-editor.readthedocs.org/en/latest/simplification.html#term-unitfactor">sqrtProducts</a></label>
+					<label><input class="rule-checkbox" type="checkbox" name="sqrtDivision"/><a target="ruledoc" href="http://numbas-editor.readthedocs.org/en/latest/simplification.html#term-unitfactor">sqrtDivision</a></label>
+					<label><input class="rule-checkbox" type="checkbox" name="sqrtSquare"/><a target="ruledoc" href="http://numbas-editor.readthedocs.org/en/latest/simplification.html#term-unitfactor">sqrtSquare</a></label>
+					<label><input class="rule-checkbox" type="checkbox" name="trig"/><a target="ruledoc" href="http://numbas-editor.readthedocs.org/en/latest/simplification.html#term-unitfactor">trig</a></label>
+					<label><input class="rule-checkbox" type="checkbox" name="otherNumbers"/><a target="ruledoc" href="http://numbas-editor.readthedocs.org/en/latest/simplification.html#term-unitfactor">otherNumbers</a></label>
+				</div>
+			</form>
 	</body>
 </html>

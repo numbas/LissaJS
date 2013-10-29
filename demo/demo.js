@@ -9,11 +9,28 @@ $.fn.mathjax = function(latex) {
 }
 
 $(document).ready(function() {
-	$('#input').on('change keyup',function() {
-		var expr = $(this).val();
+
+	var rules = {};
+	for(var rule in LissaJS.jme.display.simplificationRules) {
+		rules[rule] = false;
+	}
+
+	function doMaths() {
+		var expr = $('#input').val();
 		$('#error, #preview, #evaluated').hide();
+		if(expr.trim().length==0)
+			return;
+
+		var activeRules = [];
+		for(var rule in rules) {
+			if(rules[rule]) {
+				activeRules.push(rule);
+			}
+		}
+		console.log(activeRules);
+
 		try {
-			var latex = LissaJS.display.exprToLaTeX(expr,[],LissaJS.builtinScope);
+			var latex = LissaJS.jme.display.exprToLaTeX(expr,activeRules,LissaJS.jme.builtinScope);
 		}
 		catch(e) {
 			$('#error') 
@@ -21,7 +38,6 @@ $(document).ready(function() {
 				.find('.content')
 					.html(e.message)
 			;
-			console.log(e.message);
 			return;
 		}
 		$('#preview') 
@@ -31,8 +47,8 @@ $(document).ready(function() {
 		;
 
 		try {
-			var value = LissaJS.evaluate(expr,LissaJS.builtinScope);
-			value = LissaJS.display.texify({tok:value});
+			var value = LissaJS.jme.evaluate(expr,LissaJS.jme.builtinScope);
+			value = LissaJS.jme.display.texify({tok:value});
 		}
 		catch(e) {
 		}
@@ -41,5 +57,23 @@ $(document).ready(function() {
 			.find('.content')
 				.mathjax(value)
 		;
+	}
+
+	$('#input').on('change keyup',doMaths);
+
+	$('.rule-checkbox').on('change',function() {
+		var rule = $(this).attr('name');
+		rules[rule] = $(this).is(':checked');
+		$('#all-rules').prop('checked',($('.rule-checkbox:checked').length == $('.rule-checkbox').length));
+		doMaths();
+	});
+
+	$('#all-rules').on('click',function() {
+		var checked = $(this).is(':checked');
+		$('.rule-checkbox').prop('checked',checked);
+		for(var rule in rules) {
+			rules[rule] = checked;
+		}
+		doMaths();
 	});
 });
