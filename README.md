@@ -5,6 +5,8 @@ A library for parsing, evaluating and rearranging algebraic expressions in JavaS
 
 This is a spin-off of the [Numbas](https://github.com/numbas/Numbas) e-assessment system. It has no external dependencies, but the code's a bit of a mess at the moment.
 
+It's currently provided on a "do what you can with it" basis; we'll add examples and documentation later.
+
 Demo
 ----
 
@@ -15,7 +17,11 @@ Installing LissaJS
 
 Include the lissajs.js script in your page.
 
-    <script charset="UTF-8" type="text/javascript" src="lissajs.js"></script>
+    <script src="lissajs.js"></script>
+    
+It uses some ECMAScript 5 features. For older browsers, you'll also need to load [es5-shim](https://github.com/kriskowal/es5-shim).
+    
+LissaJS is released under the [Apache 2.0 licence](http://www.tldrlegal.com/license/apache-license-2.0-%28apache-2.0%29).
 
 Using LissaJS
 -------------
@@ -37,3 +43,5 @@ To convert an expression to LaTeX:
 To simplify (rearrange) an expression:
 
     LissaJS.jme.display.simplifyExpression('expression',[rules],[scope]);
+    
+There are lots of pure maths functions under `LissaJS.math`.
