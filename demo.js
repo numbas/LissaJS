@@ -27,7 +27,6 @@ $(document).ready(function() {
 				activeRules.push(rule);
 			}
 		}
-		console.log(activeRules);
 
 		try {
 			var latex = LissaJS.jme.display.exprToLaTeX(expr,activeRules,LissaJS.jme.builtinScope);
