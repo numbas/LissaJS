@@ -1,3 +1,4 @@
+/*jshint unused:true, boss:true, multistr:true, smarttabs:true, laxbreak:true, sub:true */
 /*
 Copyright 2011-13 Newcastle University
 
@@ -18,22 +19,12 @@ window.LissaJS = (function() {
 
 var LissaJS = {};
 
-function formatString(args)
-{
-	var str = args[0];
-	var i=0;
-	for(var i=1;i<args.length;i++)
-	{
-		str=str.replace(/%s/,args[i]);
-	}
-	return str;
-}
 LissaJS.Error = function(message)
 {
 	this.name="LissaJS Error";
 	this.originalMessage = message;
 	this.message = Array.prototype.join.call(arguments,' ');
-}
+};
 LissaJS.Error.prototype = Error.prototype;
 LissaJS.Error.prototype.constructor = LissaJS.Error;
 
@@ -48,7 +39,7 @@ var util = LissaJS.util = {
 
 		for ( ; i < length; i++ ) {
 			// Only deal with non-null/undefined values
-			if ( (options = arguments[ i ]) != null ) {
+			if ( (options = arguments[ i ]) !== null ) {
 				// Extend the base object
 				for ( name in options ) {
 					src = target[ name ];
@@ -112,6 +103,7 @@ var util = LissaJS.util = {
 				}
 				return newobj;
 			}
+			break;
 		default:
 			return obj;
 		}
@@ -124,7 +116,7 @@ var util = LissaJS.util = {
 		for(var x in src)
 		{
 			if(dest[x]===undefined)
-				dest[x]=src[x]
+				dest[x]=src[x];
 		}
 	},
 
@@ -140,7 +132,7 @@ var util = LissaJS.util = {
 			case 'matrix':
 				return LissaJS.matrixmath.eq(a.value,b.value);
 			case 'list':
-				return a.value.length==b.value.length && a.value.filter(function(ae,i){return !util.eq(ae,b.value[i])}).length==0;
+				return a.value.length==b.value.length && a.value.filter(function(ae,i){return !util.eq(ae,b.value[i]);}).length===0;
 			case 'range':
 				return a.value[0]==b.value[0] && a.value[1]==b.value[1] && a.value[2]==b.value[2];
 			case 'name':
@@ -188,7 +180,7 @@ var util = LissaJS.util = {
 	//returns if parameter is a boolean literal, or any of the strings 'false','true','yes','no', case-insensitive
 	isBool: function(b)
 	{
-		if(b==null) { return false; }
+		if(b===null) { return false; }
 		if(typeof(b)=='boolean') { return true; }
 
 		b = b.toString().toLowerCase();
@@ -226,8 +218,8 @@ var util = LissaJS.util = {
 	// formatString('hello %s %s','Mr.','Perfect') => 'hello Mr. Perfect'
 	formatString: function(str)
 	{
-		var i=0;
-		for(var i=1;i<arguments.length;i++)
+		var i;
+		for(i=1;i<arguments.length;i++)
 		{
 			str=str.replace(/%s/,arguments[i]);
 		}
@@ -257,7 +249,7 @@ var util = LissaJS.util = {
 
 	//make the first letter in the string a capital
 	capitalise: function(str) {
-		return str.replace(/[a-z]/,function(c){return c.toUpperCase()});
+		return str.replace(/[a-z]/,function(c){return c.toUpperCase();});
 	},
 
 	//split a string up according to brackets
@@ -290,7 +282,7 @@ var util = LissaJS.util = {
 			else if(depth>0 && t.charAt(i)==rb && !(i>0 && t.charAt(i-1)=='\\'))
 			{
 				depth-=1;
-				if(depth==0)
+				if(depth===0)
 				{
 					o.push(t.slice(s,i));
 					s=i+1;
@@ -351,14 +343,14 @@ var util = LissaJS.util = {
 				return -1;
 			else
 				return 0;
-		}
+		};
 	},
 
 	// from http://werxltd.com/wp/2010/05/13/javascript-implementation-of-javas-string-hashcode-method/
 	// got rid of the line to convert to 32 bit, because I don't need it
 	hashCode: function(str){
 		var hash = 0, i, c;
-		if (str.length == 0) return hash;
+		if (str.length === 0) return hash;
 		for (i = 0; i < str.length; i++) {
 			c = str.charCodeAt(i);
 			hash = ((hash<<5)-hash)+c;
@@ -383,7 +375,8 @@ if(!Array.prototype.contains)
 
 function mergeArrays(arr1,arr2,sortfn)
 {
-	if(arr1.length==0)
+	var i;
+	if(arr1.length===0)
 		return arr2.slice();
 
 	var out = arr1.concat(arr2);
@@ -393,8 +386,8 @@ function mergeArrays(arr1,arr2,sortfn)
 		out.sort();
 	if(sortfn) 
 	{
-		for(var i=1; i<out.length;) {
-			if(sortfn(out[i-1],out[i])==0)	//duplicate elements, so remove latest
+		for(i=1; i<out.length;) {
+			if(sortfn(out[i-1],out[i])===0)	//duplicate elements, so remove latest
 				out.splice(i,1);
 			else
 				i++;
@@ -402,7 +395,7 @@ function mergeArrays(arr1,arr2,sortfn)
 	}
 	else
 	{
-		for(var i=1;i<out.length;) {
+		for(i=1;i<out.length;) {
 			if(out[i-1]==out[i])
 				out.splice(i,1);
 			else
@@ -424,7 +417,7 @@ var math = LissaJS.math = {
 			return re;
 		else
 			return {re: re, im: im, complex: true, 
-			toString: math.complexToString}
+			toString: math.complexToString};
 	},
 	
 	complexToString: function()
@@ -504,11 +497,12 @@ var math = LissaJS.math = {
 
 	div: function(a,b)
 	{
+		var q;
 		if(a.complex)
 		{
 			if(b.complex)
 			{
-				var q = b.re*b.re + b.im*b.im;
+				q = b.re*b.re + b.im*b.im;
 				return math.complex((a.re*b.re + a.im*b.im)/q, (a.im*b.re - a.re*b.im)/q);
 			}
 			else
@@ -518,7 +512,7 @@ var math = LissaJS.math = {
 		{
 			if(b.complex)
 			{
-				var q = b.re*b.re + b.im*b.im;
+				q = b.re*b.re + b.im*b.im;
 				return math.complex(a*b.re/q, -a*b.im/q);
 			}
 			else
@@ -532,7 +526,7 @@ var math = LissaJS.math = {
 		{
 			if(b<0)
 				return math.div(1,math.pow(a,-b));
-			if(b==0)
+			if(b===0)
 				return 1;
 			var coeffs = math.binomialCoefficients(b);
 
@@ -544,11 +538,11 @@ var math = LissaJS.math = {
 				im += coeffs[i+1]*Math.pow(a.re,b-i-1)*Math.pow(a.im,i+1)*sign;
 				sign = -sign;
 			}
-			if(b%2==0)
+			if(b%2===0)
 				re += Math.pow(a.im,b)*sign;
 			return math.complex(re,im);
 		}
-		if(a.complex || b.complex || (a<0 && math.fract(b)!=0))
+		if(a.complex || b.complex || (a<0 && math.fract(b)!==0))
 		{
 			if(!a.complex)
 				a = {re: a, im: 0, complex: true};
@@ -592,7 +586,7 @@ var math = LissaJS.math = {
 		else if(n<0)
 			return math.complex(0,Math.sqrt(-n));
 		else
-			return Math.sqrt(n)
+			return Math.sqrt(n);
 	},
 
 	log: function(n)
@@ -624,12 +618,12 @@ var math = LissaJS.math = {
 	{
 		if(n.complex)
 		{
-			if(n.re==0)
+			if(n.re===0)
 				return Math.abs(n.im);
-			else if(n.im==0)
+			else if(n.im===0)
 				return Math.abs(n.re);
 			else
-				return Math.sqrt(n.re*n.re + n.im*n.im)
+				return Math.sqrt(n.re*n.re + n.im*n.im);
 		}
 		else
 			return Math.abs(n);
@@ -698,12 +692,12 @@ var math = LissaJS.math = {
 			if(b.complex)
 				return (a.re==b.re && a.im==b.im);
 			else
-				return (a.re==b && a.im==0);
+				return (a.re==b && a.im===0);
 		}
 		else
 		{
 			if(b.complex)
-				return (a==b.re && b.im==0);
+				return (a==b.re && b.im===0);
 			else
 				return a==b;
 		}
@@ -749,9 +743,9 @@ var math = LissaJS.math = {
 		{
 			var re = math.niceNumber(n.re,options);
 			var im = math.niceNumber(n.im,options);
-			if(math.precround(n.im,10)==0)
+			if(math.precround(n.im,10)===0)
 				return re+'';
-			else if(math.precround(n.re,10)==0)
+			else if(math.precround(n.re,10)===0)
 			{
 				if(n.im==1)
 					return 'i';
@@ -785,26 +779,28 @@ var math = LissaJS.math = {
 				n /= Math.pow(Math.PI,piD);
 
 			var out;
+			var precision;
+			var i;
 			switch(options.precisionType) {
 			case 'sigfig':
-				var precision = options.precision;
+				precision = options.precision;
 				out = math.siground(n,precision)+'';
 				var sigFigs = math.countSigFigs(out);
 				if(sigFigs<precision) {
 					if(out.indexOf('.')==-1)
 						out += '.';
-					for(var i=0;i<precision-sigFigs;i++)
+					for(i=0;i<precision-sigFigs;i++)
 						out+='0';
 				}
 				break;
 			case 'dp':
-				var precision = options.precision;
+				precision = options.precision;
 				out = math.precround(n,precision)+'';
 				var dp = math.countDP(out);
 				if(dp<precision) {
 					if(out.indexOf('.')==-1)
 						out += '.';
-					for(var i=0;i<precision-dp;i++)
+					for(i=0;i<precision-dp;i++)
 						out+='0';
 				}
 				break;
@@ -820,6 +816,7 @@ var math = LissaJS.math = {
 					return 'pi';
 				else
 					return out+'*pi';
+				break;
 			default:
 				if(n==1)
 					return 'pi^'+piD;
@@ -906,7 +903,7 @@ var math = LissaJS.math = {
 		else
 		{
 			var s = math.sign(a);
-			if(a==0) { return 0; }
+			if(a===0) { return 0; }
 			if(a==Infinity || a==-Infinity) { return a; }
 			b = Math.pow(10, b-Math.ceil(math.log10(s*a)));
 
@@ -968,7 +965,7 @@ var math = LissaJS.math = {
 		var g = 7;
 		var p = [0.99999999999980993, 676.5203681218851, -1259.1392167224028, 771.32342877765313, -176.61502916214059, 12.507343278686905, -0.13857109526572012, 9.9843695780195716e-6, 1.5056327351493116e-7];
 		
-		var mul = math.mul, div = math.div, exp = math.exp, neg = math.negate, pow = math.pow, sqrt = math.sqrt, sin = math.sin, add = math.add, sub = math.sub, pi = Math.PI, im = math.complex(0,1);
+		var mul = math.mul, div = math.div, exp = math.exp, neg = math.negate, pow = math.pow, sqrt = math.sqrt, sin = math.sin, add = math.add, sub = math.sub, pi = Math.PI;
 		
 		if((n.complex && n.re<0.5) || (!n.complex && n<0.5))
 		{
@@ -1042,10 +1039,10 @@ var math = LissaJS.math = {
 	arccos: function(x) {
 		if(x.complex || math.abs(x)>1)
 		{
-			var i = math.complex(0,1), ni = math.complex(0,-1);
+			var ni = math.complex(0,-1);
 			var ex = add(x, math.sqrt( sub(mul(x,x),1) ) );	//x+sqrt(x^2-1)
 			var result = mul(ni,math.log(ex));
-			if(math.re(result)<0 || math.re(result)==0 && math.im(result)<0)
+			if(math.re(result)<0 || math.re(result)===0 && math.im(result)<0)
 				result = math.negate(result);
 			return result;
 		}
@@ -1072,7 +1069,7 @@ var math = LissaJS.math = {
 		if(x.complex)
 			return div(add(math.exp(x), math.exp(math.negate(x))),2);
 		else
-			return (Math.exp(x)+Math.exp(-x))/2
+			return (Math.exp(x)+Math.exp(-x))/2;
 	},
 	tanh: function(x) {
 		return div(math.sinh(x),math.cosh(x));
@@ -1150,7 +1147,7 @@ var math = LissaJS.math = {
 		if(x.complex)
 			return math.complex(math.sign(x.re),math.sign(x.im));
 
-		if(x==0) {
+		if(x===0) {
 			return 0;
 		}else if (x>0) {
 			return 1;
@@ -1176,7 +1173,7 @@ var math = LissaJS.math = {
 		}
 		else
 		{
-			if(range[2]==0)
+			if(range[2]===0)
 			{
 				return math.randomrange(range[0],range[1]);
 			}
@@ -1205,7 +1202,7 @@ var math = LissaJS.math = {
 	//choose one item from an array
 	choose: function(selection)
 	{
-		if(selection.length==0)
+		if(selection.length===0)
 			throw(new LissaJS.Error('math.choose.empty selection'));
 		var n = Math.floor(math.randomrange(0,selection.length));
 		return selection[n];
@@ -1243,7 +1240,7 @@ var math = LissaJS.math = {
 		if(a.complex || b.complex || !LissaJS.util.isInt(a) || !LissaJS.util.isInt(b))
 			return false;
 
-		return (b % a) == 0;
+		return (b % a) === 0;
 	},
 
 	gcf: function(a,b) {
@@ -1258,9 +1255,9 @@ var math = LissaJS.math = {
 		var c=0;
 		if(a<b) { c=a; a=b; b=c; }		
 
-		if(b==0){return 1;}
+		if(b===0){return 1;}
 		
-		while(a % b != 0) {
+		while(a % b !== 0) {
 			c=b;
 			b=a % b;
 			a=c;
@@ -1308,14 +1305,15 @@ var math = LissaJS.math = {
 			return [n,1];
 		var l = 0;
 		var frac = [];
+		var j;
 		while(Math.abs(on-e)>accuracy)
 		{
 			l+=1;
 			var i = Math.floor(n);
 			frac.push(i);
 			n = 1/(n-i);
-			var e = Infinity;
-			for(var j=l-1;j>=0;j--)
+			e = Infinity;
+			for(j=l-1;j>=0;j--)
 			{
 				e = frac[j]+1/e;
 			}
@@ -1345,23 +1343,23 @@ var vectormath = LissaJS.vectormath = {
 			b = a;
 			a = c;
 		}
-		return a.map(function(x,i){ return add(x,b[i]||0) });
+		return a.map(function(x,i){ return add(x,b[i]||0); });
 	},
 
 	sub: function(a,b) {
 		if(b.length>a.length)
 		{
-			return b.map(function(x,i){ return sub(a[i]||0,x) });
+			return b.map(function(x,i){ return sub(a[i]||0,x); });
 		}
 		else
 		{
-			return a.map(function(x,i){ return sub(x,b[i]||0) });
+			return a.map(function(x,i){ return sub(x,b[i]||0); });
 		}
 	},
 
 	//scalar multiplication - a should just be a number
 	mul: function(k,v) {
-		return v.map(function(x){ return mul(k,x) });
+		return v.map(function(x){ return mul(k,x); });
 	},
 
 	//dot product
@@ -1373,7 +1371,7 @@ var vectormath = LissaJS.vectormath = {
 			if(a.rows==1)
 				a = a[0];
 			else if(a.columns==1)
-				a = a.map(function(x){return x[0]});
+				a = a.map(function(x){ return x[0];});
 			else
 				throw(new LissaJS.Error('vectormath.dot.matrix too big'));
 		}
@@ -1383,7 +1381,7 @@ var vectormath = LissaJS.vectormath = {
 			if(b.rows==1)
 				b = b[0];
 			else if(b.columns==1)
-				b = b.map(function(x){return x[0]});
+				b = b.map(function(x){ return x[0]; });
 			else
 				throw(new LissaJS.Error('vectormath.dot.matrix too big'));
 		}
@@ -1393,7 +1391,7 @@ var vectormath = LissaJS.vectormath = {
 			b = a;
 			a = c;
 		}
-		return a.reduce(function(s,x,i){ return add(s,mul(x,b[i]||0)) },0);
+		return a.reduce(function(s,x,i){ return add(s,mul(x,b[i]||0)); },0);
 	},
 
 	//cross product
@@ -1404,7 +1402,7 @@ var vectormath = LissaJS.vectormath = {
 			if(a.rows==1)
 				a = a[0];
 			else if(a.columns==1)
-				a = a.map(function(x){return x[0]});
+				a = a.map(function(x){ return x[0]; });
 			else
 				throw(new LissaJS.Error('vectormath.cross.matrix too big'));
 		}
@@ -1414,7 +1412,7 @@ var vectormath = LissaJS.vectormath = {
 			if(b.rows==1)
 				b = b[0];
 			else if(b.columns==1)
-				b = b.map(function(x){return x[0]});
+				b = b.map(function(x){ return x[0]; });
 			else
 				throw(new LissaJS.Error('vectormath.cross.matrix too big'));
 		}
@@ -1440,7 +1438,7 @@ var vectormath = LissaJS.vectormath = {
 			b = a;
 			a = c;
 		}
-		return a.reduce(function(s,x,i){return s && eq(x,b[i]||0)},true);
+		return a.reduce(function(s,x,i){ return s && eq(x,b[i]||0); },true);
 	},
 
 	neq: function(a,b) {
@@ -1460,7 +1458,7 @@ var vectormath = LissaJS.vectormath = {
 		matrix.columns = v.length;
 		return matrix;
 	}
-}
+};
 
 //matrix operations
 //again, these operations are lax about the sizes of things
@@ -1468,7 +1466,7 @@ var matrixmath = LissaJS.matrixmath = {
 	negate: function(m) {
 		var matrix = [];
 		for(var i=0;i<m.rows;i++) {
-			matrix.push(m[i].map(function(x){ return negate(x) }));
+			matrix.push(m[i].map(negate));
 		}
 		matrix.rows = m.rows;
 		matrix.columns = m.columns;
@@ -1569,7 +1567,6 @@ var matrixmath = LissaJS.matrixmath = {
 
 	eq: function(a,b) {
 		var rows = Math.max(a.rows,b.rows);
-		var columns = Math.max(a.columns,b.columns);
 		for(var i=0;i<rows;i++)
 		{
 			var rowA = a[i] || [];
@@ -1615,7 +1612,7 @@ var matrixmath = LissaJS.matrixmath = {
 		}
 		return out;
 	}
-}
+};
 
 var jme = LissaJS.jme = {
 
@@ -1686,7 +1683,7 @@ var jme = LissaJS.jme = {
 				//work out if operation is being used prefix or postfix
 				var nt;
 				var postfix = false;
-				if( tokens.length==0 || (nt=tokens[tokens.length-1].type)=='(' || nt==',' || nt=='[' || (nt=='op' && !tokens[tokens.length-1].postfix) )
+				if( tokens.length===0 || (nt=tokens[tokens.length-1].type)=='(' || nt==',' || nt=='[' || (nt=='op' && !tokens[tokens.length-1].postfix) )
 				{
 					if(token in prefixForm)
 						token = prefixForm[token];
@@ -1737,7 +1734,7 @@ var jme = LissaJS.jme = {
 	
 				var estr = '';
 				while(true) {
-					var i = str.indexOf('\\');
+					i = str.indexOf('\\');
 					if(i==-1)
 						break;
 					else {
@@ -1798,7 +1795,7 @@ var jme = LissaJS.jme = {
 		}
 
 		//rewrite some synonyms
-		for(var i=0; i<tokens.length; i++)
+		for(i=0; i<tokens.length; i++)
 		{
 			if(tokens[i].name)
 			{
@@ -1811,7 +1808,7 @@ var jme = LissaJS.jme = {
 		return(tokens);
 	},
 
-	shunt: function(tokens,scope)
+	shunt: function(tokens)
 	// turns tokenised infix expression into a parse tree (shunting yard algorithm, wikipedia has a good description)
 	{
 		var output = [];
@@ -1838,6 +1835,9 @@ var jme = LissaJS.jme = {
 		for(var i = 0;i < tokens.length; i++ )
 		{
 			var tok = tokens[i];
+			var n;
+			var l;
+			var f;
 			
 			switch(tok.type) 
 			{
@@ -1869,7 +1869,7 @@ var jme = LissaJS.jme = {
 			case ",":
 				while( stack.length && stack[stack.length-1].type != "(" && stack[stack.length-1].type != '[')
 				{	//reached end of expression defining function parameter, so pop all of its operations off stack and onto output
-					addoutput(stack.pop())
+					addoutput(stack.pop());
 				}
 
 				numvars[numvars.length-1]++;
@@ -1891,7 +1891,7 @@ var jme = LissaJS.jme = {
 				break;
 
 			case '[':
-				if(i==0 || tokens[i-1].type=='(' || tokens[i-1].type=='[' || tokens[i-1].type==',' || tokens[i-1].type=='op')	//define list
+				if(i===0 || tokens[i-1].type=='(' || tokens[i-1].type=='[' || tokens[i-1].type==',' || tokens[i-1].type=='op')	//define list
 				{
 					listmode.push('new');
 				}
@@ -1918,18 +1918,18 @@ var jme = LissaJS.jme = {
 				}
 
 				//work out size of list
-				var n = numvars.pop();
-				var l = olength.pop();
+				n = numvars.pop();
+				l = olength.pop();
 				if(output.length>l)
 					n++;
 
 				switch(listmode.pop())
 				{
 				case 'new':
-					addoutput(new TList(n))
+					addoutput(new TList(n));
 					break;
 				case 'index':
-					var f = new TFunc('listval');
+					f = new TFunc('listval');
 					f.vars = 2;
 					addoutput(f);
 					break;
@@ -1957,11 +1957,11 @@ var jme = LissaJS.jme = {
 					if( stack.length && stack[stack.length-1].type=="function") 
 					{	
 						//work out arity of function
-						var n = numvars.pop();
-						var l = olength.pop();
+						n = numvars.pop();
+						l = olength.pop();
 						if(output.length>l)
 							n++;
-						var f = stack.pop();
+						f = stack.pop();
 						f.vars = n;
 
 						addoutput(f);
@@ -2047,6 +2047,8 @@ var jme = LissaJS.jme = {
 		tree = jme.substituteTree(tree,scope,true);
 
 		var tok = tree.tok;
+		var i;
+
 		switch(tok.type)
 		{
 		case 'number':
@@ -2057,7 +2059,7 @@ var jme = LissaJS.jme = {
 			if(tok.value===undefined)
 			{
 				var value = [];
-				for(var i=0;i<tree.args.length;i++)
+				for(i=0;i<tree.args.length;i++)
 				{
 					value[i] = jme.evaluate(tree.args[i],scope);
 				}
@@ -2080,7 +2082,7 @@ var jme = LissaJS.jme = {
 			}
 			else {
 
-				for(var i=0;i<tree.args.length;i++) {
+				for(i=0;i<tree.args.length;i++) {
 					tree.args[i] = jme.evaluate(tree.args[i],scope);
 				}
 
@@ -2112,6 +2114,7 @@ var jme = LissaJS.jme = {
 				else
 					throw(new LissaJS.Error('jme.typecheck.no right type definition',op));
 			}
+			break;
 		default:
 			return tok;
 		}
@@ -2153,7 +2156,7 @@ var jme = LissaJS.jme = {
 			var tree1 = compile(expr1,scope);
 			var tree2 = compile(expr2,scope);
 
-			if(tree1 == null || tree2 == null) 
+			if(tree1 === null || tree2 === null) 
 			{	//one or both expressions are invalid, can't compare
 				return false; 
 			}
@@ -2161,6 +2164,7 @@ var jme = LissaJS.jme = {
 			//find variable names used in both expressions - can't compare if different
 			var vars1 = findvars(tree1);
 			var vars2 = findvars(tree2);
+			var r1,r2;
 
 			for(var v in scope.variables)
 			{
@@ -2180,8 +2184,8 @@ var jme = LissaJS.jme = {
 				for(var i = 0; i<rs.length; i++) {
 					var nscope = new jme.Scope([scope,{variables:rs[i]}]);
 					util.copyinto(scope.variables,rs[i]);
-					var r1 = evaluate(tree1,nscope);
-					var r2 = evaluate(tree2,nscope);
+					r1 = evaluate(tree1,nscope);
+					r2 = evaluate(tree2,nscope);
 					if( !resultsEqual(r1,r2,checkingFunction,settings.checkingAccuracy) ) { errors++; }
 				}
 				if(errors < settings.failureRate) {
@@ -2214,7 +2218,7 @@ var jme = LissaJS.jme = {
 				out += jme.subvars(bits[i],scope,true);
 				break;
 			case 2:	//a TeX expression - variables inserted with \var and \simplify commands
-				out += jme.texsubvars(bits[i],scope)
+				out += jme.texsubvars(bits[i],scope);
 				break;
 			case 1:	//a TeX delimiter
 			case 3:
@@ -2237,13 +2241,14 @@ var jme = LissaJS.jme = {
 			out.push(cmd);
 
 			var i = m[0].length;
+			var si;
 
 			var args = '';
 			var argbrackets = false;
 			if( s.charAt(i) == '[' )
 			{
 				argbrackets = true;
-				var si = i+1;
+				si = i+1;
 				while(i<s.length && s.charAt(i)!=']')
 					i++;
 				if(i==s.length)
@@ -2264,7 +2269,7 @@ var jme = LissaJS.jme = {
 			}
 
 			var brackets=1;
-			var si = i+1;
+			si = i+1;
 			while(i<s.length-1 && brackets>0)
 			{
 				i++;
@@ -2384,7 +2389,7 @@ var jme = LissaJS.jme = {
 	}
 };
 
-jme.re.re_whitespace = '(?:[\\s \\f\\n\\r\\t\\v\\u00A0\\u2028\\u2029]|(?:\&nbsp;))';
+jme.re.re_whitespace = '(?:[\\s \\f\\n\\r\\t\\v\\u00A0\\u2028\\u2029]|(?:&nbsp;))';
 jme.re.re_strip_whitespace = new RegExp('^'+jme.re.re_whitespace+'+|'+jme.re.re_whitespace+'+$','g');
 
 
@@ -2397,7 +2402,7 @@ var ruleSort = util.sortBy('patternString');
 var Ruleset = jme.Ruleset = function(rules,flags) {
 	this.rules = rules;
 	this.flags = util.extend(displayFlags,flags);
-}
+};
 Ruleset.prototype = {
 	flagSet: function(flag) {
 		flag = flag.toLowerCase();
@@ -2406,7 +2411,7 @@ Ruleset.prototype = {
 		else
 			return false;
 	}
-}
+};
 
 function mergeRulesets(r1,r2) {
 	var rules = mergeArrays(r1.rules,r2.rules,ruleSort);
@@ -2459,11 +2464,12 @@ var collectRuleset = jme.collectRuleset = function(set,scopeSets)
 				var sub = collectRuleset(scopeSets[name],scopeSets);
 
 				flags = util.extend(flags,sub.flags);
+				var j;
 
 				scopeSets[name] = sub;
 				if(neg)
 				{
-					for(var j=0; j<sub.rules.length; j++)
+					for(j=0; j<sub.rules.length; j++)
 					{
 						if((m=rules.indexOf(sub.rules[j]))>=0)
 						{
@@ -2473,7 +2479,7 @@ var collectRuleset = jme.collectRuleset = function(set,scopeSets)
 				}
 				else
 				{
-					for(var j=0; j<sub.rules.length; j++)
+					for(j=0; j<sub.rules.length; j++)
 					{
 						if(!(rules.contains(sub.rules[j])))
 						{
@@ -2487,7 +2493,8 @@ var collectRuleset = jme.collectRuleset = function(set,scopeSets)
 			rules.push(set[i]);
 	}
 	return new Ruleset(rules,flags);
-}
+};
+
 //evaluation environment
 //if called with a list of scopes, they will be combined into this new one
 var fnSort = util.sortBy('id');
@@ -2502,16 +2509,17 @@ var Scope = jme.Scope = function(scopes) {
 	if(!Array.isArray(scopes))
 		scopes = [scopes];
 
+	var x;
 	for(var i=0;i<scopes.length;i++) {
 		var scope = scopes[i];
 		if(scope) {
 			if('variables' in scope) {
-				for(var x in scope.variables) {
+				for(x in scope.variables) {
 					this.variables[x] = scope.variables[x];
 				}
 			}
 			if('functions' in scope) {
-				for(var x in scope.functions) {
+				for(x in scope.functions) {
 					if(!(x in this.functions))
 						this.functions[x] = scope.functions[x].slice();
 					else 
@@ -2519,7 +2527,7 @@ var Scope = jme.Scope = function(scopes) {
 				}
 			}
 			if('rulesets' in scope) {
-				for(var x in scope.rulesets) {
+				for(x in scope.rulesets) {
 					if(!(x in this.rulesets))
 						this.rulesets[x] = scope.rulesets[x];
 					else
@@ -2528,7 +2536,8 @@ var Scope = jme.Scope = function(scopes) {
 			}
 		}
 	}
-}
+};
+
 Scope.prototype = {
 	addFunction: function(fn) {
 		if(!(fn.name in this.functions))
@@ -2560,7 +2569,7 @@ var symbols = {
 	'product': '\\prod',		'sqrt': '\\sqrt',					'dot': '\\cdot',
 	'¬': '\\neg',				'logicaland': '\\wedge',			'logicalor': '\\vee',
 	'doubleimplies': '\\Leftrightarrow',							'impliesby': '\\Leftarrow',
-	'impliesup': '\\Uparrow', 	'impliesdown': '\\Downarrow',		'implies': '\\Rightarrow',
+	'impliesup': '\\Uparrow',	'impliesdown': '\\Downarrow',		'implies': '\\Rightarrow',
 	'rightanglebracket': '\\rangle',								'integral': '\\int',
 	'(': '\\left ( \\right .',					')': '\\left ) \\right .'
 };
@@ -2588,14 +2597,15 @@ builtinsbylength.add = function(e)
 
 
 //the data types supported by JME expressions
-var types = jme.types = {}
+var types = jme.types = {};
 var TNum = types.TNum = types.number = function(num)
 {
 	if(num===undefined) 
 		return;
 
 	this.value = num.complex ? num : parseFloat(num);
-}
+};
+
 TNum.prototype.type = 'number';
 TNum.doc = {
 	name: 'number',
@@ -2606,7 +2616,7 @@ TNum.doc = {
 var TString = types.TString = types.string = function(s)
 {
 	this.value = s;
-}
+};
 TString.prototype.type = 'string';
 TString.doc = {
 	name: 'string',
@@ -2617,24 +2627,23 @@ TString.doc = {
 var TBool = types.TBool = types.boolean = function(b)
 {
 	this.value = b;
-}
+};
 TBool.prototype.type = 'boolean';
 TBool.doc = {
 	name: 'boolean',
 	usage: ['true','false'],
 	description: "Booleans represent either truth or falsity. The logical operations @and@, @or@ and @xor@ operate on and return booleans."
-}
+};
 
 var THTML = types.THTML = types.html = function(html) {
 	this.value = html;
-}
+};
 THTML.prototype.type = 'html';
 THTML.doc = {
 	name: 'html',
 	usage: ['html(\'<div>things</div>\')'],
 	description: "An HTML DOM node."
-}
-
+};
 
 var TList = types.TList = types.list = function(value)
 {
@@ -2650,7 +2659,7 @@ var TList = types.TList = types.list = function(value)
 	default:
 		this.vars = 0;
 	}
-}
+};
 TList.prototype.type = 'list';
 TList.doc = {
 	name: 'list',
@@ -2661,24 +2670,24 @@ TList.doc = {
 var TVector = types.TVector = types.vector = function(value)
 {
 	this.value = value;
-}
+};
 TVector.prototype.type = 'vector';
 TVector.doc = {
 	name: 'vector',
 	usage: ['vector(1,2)','vector([1,2,3,4])'],
 	description: 'The components of a vector must be numbers.\n\n When combining vectors of different dimensions, the smaller vector is padded with zeroes to make up the difference.'
-}
+};
 
 var TMatrix = types.TMatrix = types.matrix = function(value)
 {
 	this.value = value;
-}
+};
 TMatrix.prototype.type = 'matrix';
 TMatrix.doc = {
 	name: 'matrix',
 	usage: ['matrix([1,2,3],[4,5,6])','matrix(row1,row2)'],
 	description: "Matrices are constructed from lists of numbers, representing the rows.\n\n When combining matrices of different dimensions, the smaller matrix is padded with zeroes to make up the difference."
-}
+};
 
 var TRange = types.TRange = types.range = function(range)
 {
@@ -2688,7 +2697,7 @@ var TRange = types.TRange = types.range = function(range)
 		var start = this.value[0], end = this.value[1], step = this.value[2];
 
 		//if range is discrete, store all values in range so they don't need to be computed each time
-		if(step != 0)
+		if(step !== 0)
 		{
 			var n = (end-start)/step;
 			this.size = n+1;
@@ -2698,20 +2707,20 @@ var TRange = types.TRange = types.range = function(range)
 			}
 		}
 	}
-}
+};
 TRange.prototype.type = 'range';
 TRange.doc = {
 	name: 'range',
 	usage: ['1..3','1..3#0.1','1..3#0'],
-	description: 'A range @a..b#c@ represents the set of numbers $\\{a+nc | 0 \\leq n \\leq \\frac{b-a}{c} \\}$. If the step size is zero, then the range is the continuous interval $\[a,b\]$.'
-}
+	description: 'A range @a..b#c@ represents the set of numbers $\\{a+nc | 0 \\leq n \\leq \\frac{b-a}{c} \\}$. If the step size is zero, then the range is the continuous interval $\\[a,b\\]$.'
+};
 
 var TName = types.TName = types.name = function(name,annotation)
 {
 	this.name = name;
 	this.value = name;
 	this.annotation = annotation;
-}
+};
 TName.prototype.type = 'name';
 TName.doc = {
 	name: 'name',
@@ -2737,7 +2746,7 @@ var TFunc = types.TFunc = types['function'] = function(name,annotation)
 {
 	this.name = name;
 	this.annotation = annotation;
-}
+};
 TFunc.prototype.type = 'function';
 TFunc.prototype.vars = 0;
 
@@ -2750,26 +2759,26 @@ var TOp = types.TOp = types.op = function(op,postfix)
 	this.name = op;
 	this.postfix = postfix || false;
 	this.vars = arity;
-}
+};
 TOp.prototype.type = 'op';
 
 var TPunc = types.TPunc = function(kind)
 {
 	this.type = kind;
-}
+};
 
 
 //special character
 var TSpecial = jme.types.TSpecial = function(value)
 {
 	this.value = value;
-}
+};
 TSpecial.prototype.type = 'special';
 
 //concatenation - for dealing with special characters
 var TConc = jme.types.TConc = function()
 {
-}
+};
 TConc.prototype.type = 'conc';
 
 var arity = jme.arity = {
@@ -2778,17 +2787,17 @@ var arity = jme.arity = {
 	'fact': 1,
 	'+u': 1,
 	'-u': 1
-}
+};
 
 //some names represent different operations when used as prefix or as postfix. This dictionary translates them
 var prefixForm = {
 	'+': '+u',
 	'-': '-u',
 	'!': 'not'
-}
+};
 var postfixForm = {
 	'!': 'fact'
-}
+};
 
 var precedence = jme.precedence = {
 	'fact': 1,
@@ -2837,7 +2846,7 @@ function leftAssociative(op)
 	// check for left-associativity because that is the case when you do something more
 	// exponentiation is only right-associative operation at the moment
 	return (op!='^');
-};
+}
 
 var commutative = jme.commutative =
 {
@@ -2907,7 +2916,7 @@ var funcObj = jme.funcObj = function(name,intype,outcons,fn,options)
 						return false;
 				}
 			}else{
-				if(variables.length==0)
+				if(variables.length===0)
 					return false;
 
 				if(variables[0].type==this.intype[i] || this.intype[i]=='?' || variables[0].type=='?')
@@ -2922,7 +2931,7 @@ var funcObj = jme.funcObj = function(name,intype,outcons,fn,options)
 			return true;
 	};
 
-	this.evaluate = options.evaluate || function(args,scope)
+	this.evaluate = options.evaluate || function(args)
 	{
 		var nargs = [];
 		for(var i=0; i<args.length; i++) {
@@ -2943,10 +2952,10 @@ var funcObj = jme.funcObj = function(name,intype,outcons,fn,options)
 			result = new this.outcons(result);
 
 		return result;
-	}	
+	};
 
 	this.doc = options.doc;
-}
+};
 
 // the built-in operations and functions
 var builtinScope = jme.builtinScope = new Scope();
@@ -2962,8 +2971,6 @@ builtinScope.functions['eval'] = [{
 	}
 }];
 
-var funcs = {};
-
 function newBuiltin(name,intype,outcons,fn,options) {
 	return builtinScope.addFunction(new funcObj(name,intype,outcons,fn,options));
 }
@@ -2978,7 +2985,7 @@ newBuiltin('-u', [TMatrix], TMatrix, matrixmath.negate, {doc: {usage: '-x', desc
 newBuiltin('+', [TNum,TNum], TNum, math.add, {doc: {usage: 'x+y', description: "Add two numbers together.", tags: ['plus','add','addition']}});
 
 newBuiltin('+', [TList,TList], TList, null, {
-	evaluate: function(args,scope)
+	evaluate: function(args)
 	{
 		var value = args[0].value.concat(args[1].value);
 		return new TList(value);
@@ -2992,7 +2999,7 @@ newBuiltin('+', [TList,TList], TList, null, {
 });
 
 newBuiltin('+',[TList,'?'],TList, null, {
-	evaluate: function(args,scope)
+	evaluate: function(args)
 	{
 		var value = args[0].value.slice();
 		value.push(args[1]);
@@ -3006,7 +3013,7 @@ newBuiltin('+',[TList,'?'],TList, null, {
 	}
 });
 
-var fconc = function(a,b) { return a+b; }
+var fconc = function(a,b) { return a+b; };
 newBuiltin('+', [TString,'?'], TString, fconc, {doc: {usage: '\'Hello \' + name', description: '_string_ + _anything else_ is string concatenation.', tags: ['concatenate','concatenation','add','join','strings','plus']}});
 newBuiltin('+', ['?',TString], TString, fconc, {doc: {usage: 'name + \' is OK.\'', description: '_string_ + _anything else_ is string concatenation.', tags: ['concatenate','concatenation','add','join','strings','plus']}});
 
@@ -3017,7 +3024,7 @@ newBuiltin('-', [TVector,TVector], TVector, vectormath.sub, {doc: {usage: 'vecto
 newBuiltin('-', [TMatrix,TMatrix], TMatrix, matrixmath.sub, {doc: {usage: 'matrix([1,1],[2,3]) - matrix([3,3],[2,2])', description: 'Subtract one matrix from another.', tags: ['subtraction','minus','take away']}});
 newBuiltin('*', [TNum,TNum], TNum, math.mul, {doc: {usage: ['3x','3*x','x*y','x*3'], description: 'Multiply two numbers.', tags: ['multiplication','compose','composition','times']}} );
 newBuiltin('*', [TNum,TVector], TVector, vectormath.mul, {doc: {usage: '3*vector(1,2,3)', description: 'Multiply a vector on the left by a scalar.', tags: ['multiplication','composition','compose','times']}});
-newBuiltin('*', [TVector,TNum], TVector, function(a,b){return vectormath.mul(b,a)}, {doc: {usage: 'vector(1,2,3) * 3', description: 'Multiply a vector on the right by a scalar.', tags: ['multiplication','composition','compose','times']}});
+newBuiltin('*', [TVector,TNum], TVector, function(a,b){return vectormath.mul(b,a);}, {doc: {usage: 'vector(1,2,3) * 3', description: 'Multiply a vector on the right by a scalar.', tags: ['multiplication','composition','compose','times']}});
 newBuiltin('*', [TMatrix,TVector], TVector, vectormath.matrixmul, {doc: {usage: 'matrix([1,0],[0,1]) * vector(1,2)', description: 'Multiply a matrix by a vector.', tags: ['multiplication','composition','compose','times']}});
 newBuiltin('*', [TNum,TMatrix], TMatrix, matrixmath.scalarmul, {doc: {usage: '3*matrix([1,0],[0,1])', description: 'Multiply a matrix on the left by a scalar.', tags: ['multiplication','composition','compose','times']}} );
 newBuiltin('*', [TMatrix,TNum], TMatrix, function(a,b){ return matrixmath.scalarmul(b,a); }, {doc: {usage: 'matrix([1,0],[1,2]) * 3', description: 'Multiply a matrix on the right by a scalar.', tags: ['multiplication','composition','compose','times']}} );
@@ -3061,7 +3068,7 @@ newBuiltin('image',[TString],THTML,
 );
 
 newBuiltin('latex',[TString],TString,null,{
-	evaluate: function(args,scope) {
+	evaluate: function(args) {
 		args[0].latex = true;
 		return args[0];
 	},
@@ -3079,17 +3086,17 @@ newBuiltin('lower',[TString],TString,function(s) { return s.toLowerCase(); }, {d
 //exclude numbers from a range, given either as a range, a list or a single value
 newBuiltin('except', [TRange,TRange], TList,
 	function(range,except) {
-		if(range[2]==0)
+		if(range[2]===0)
 			throw(new LissaJS.Error("jme.func.except.continuous range"));
 		range = range.slice(3);
-		if(except[2]==0)
+		if(except[2]===0)
 		{
-			return range.filter(function(i){return i<except[0] || i>except[1]}).map(function(i){return new TNum(i)});
+			return range.filter(function(i){return i<except[0] || i>except[1];}).map(function(i){return new TNum(i);});
 		}
 		else
 		{
 			except = except.slice(3);
-			return math.except(range,except).map(function(i){return new TNum(i)});
+			return math.except(range,except).map(function(i){return new TNum(i);});
 		}
 	},
 
@@ -3102,11 +3109,11 @@ newBuiltin('except', [TRange,TRange], TList,
 
 newBuiltin('except', [TRange,TList], TList,
 	function(range,except) {
-		if(range[2]==0)
+		if(range[2]===0)
 			throw(new LissaJS.Error("jme.func.except.continuous range"));
 		range = range.slice(3);
 		except = except.map(function(i){ return i.value; });
-		return math.except(range,except).map(function(i){return new TNum(i)});
+		return math.except(range,except).map(function(i){return new TNum(i);});
 	},
 
 	{doc: {
@@ -3118,10 +3125,10 @@ newBuiltin('except', [TRange,TList], TList,
 
 newBuiltin('except', [TRange,TNum], TList,
 	function(range,except) {
-		if(range[2]==0)
+		if(range[2]===0)
 			throw(new LissaJS.Error("jme.func.except.continuous range"));
 		range = range.slice(3);
-		return math.except(range,[except]).map(function(i){return new TNum(i)});
+		return math.except(range,[except]).map(function(i){return new TNum(i);});
 	},
 
 	{doc: {
@@ -3136,7 +3143,7 @@ newBuiltin('except', [TList,TRange], TList,
 	function(range,except) {
 		range = range.map(function(i){ return i.value; });
 		except = except.slice(3);
-		return math.except(range,except).map(function(i){return new TNum(i)});
+		return math.except(range,except).map(function(i){return new TNum(i);});
 	},
 
 	{doc: {
@@ -3160,11 +3167,11 @@ newBuiltin('except', [TList,TList], TList,
 );
 
 newBuiltin('except',[TList,'?'], TList, null, {
-	evaluate: function(args,scope) {
+	evaluate: function(args) {
 		return new TList(util.except(args[0].value,[args[1]]));
 	},
 
-  	doc: {
+	doc: {
 		usage: '[a,b,c,d] except b',
 		description: 'Exclude a value from a list.',
 		tags: ['except', 'exclude', 'filter', 'remove']
@@ -3176,7 +3183,7 @@ newBuiltin('>', [TNum,TNum], TBool, math.gt, {doc: {usage: ['x>y','2>1'], descri
 newBuiltin('<=', [TNum,TNum], TBool, math.leq, {doc: {usage: ['x <= y','1<=1'], description: 'Returns @true@ if the left operand is less than or equal to the right operand.', tags: ['comparison','inequality','numbers']}} );
 newBuiltin('>=', [TNum,TNum], TBool, math.geq, {doc: {usage: 'x >= y', description: 'Returns @true@ if the left operand is greater than or equal to the right operand.', tags: ['comparison','inequality','numbers']}} );
 newBuiltin('<>', ['?','?'], TBool, null, {
-	evaluate: function(args,scope) {
+	evaluate: function(args) {
 		return new TBool(util.neq(args[0],args[1]));
 	},
 	doc: {
@@ -3186,7 +3193,7 @@ newBuiltin('<>', ['?','?'], TBool, null, {
 	}
 });
 newBuiltin('=', ['?','?'], TBool, null, {
-	evaluate: function(args,scope) {
+	evaluate: function(args) {
 		return new TBool(util.eq(args[0],args[1]));
 	},
 	doc: {
@@ -3203,7 +3210,7 @@ newBuiltin('xor', [TBool,TBool], TBool, function(a,b){return (a || b) && !(a && 
 
 newBuiltin('abs', [TNum], TNum, math.abs, {doc: {usage: 'abs(x)', description: 'Absolute value of a number.', tags: ['norm','length','complex']}} );
 newBuiltin('abs', [TList], TNum, function(l) { return l.length; }, {doc: {usage: 'abs([1,2,3])', description: 'Length of a list.', tags: ['size','number','elements']}});
-newBuiltin('abs', [TRange], TNum, function(r) { return r[2]==0 ? Math.abs(r[0]-r[1]) : r.length-3; }, {doc: {usage: 'abs(1..5)', description: 'Number of elements in a numerical range.', tags: ['size','length']}});
+newBuiltin('abs', [TRange], TNum, function(r) { return r[2]===0 ? Math.abs(r[0]-r[1]) : r.length-3; }, {doc: {usage: 'abs(1..5)', description: 'Number of elements in a numerical range.', tags: ['size','length']}});
 newBuiltin('abs', [TVector], TNum, vectormath.abs, {doc: {usage: 'abs(vector(1,2,3))', description: 'Modulus of a vector.', tags: ['size','length','norm']}});
 newBuiltin('arg', [TNum], TNum, math.arg, {doc: {usage: 'arg(1+i)', description: 'Argument of a complex number.', tags: ['angle','direction']}} );
 newBuiltin('re', [TNum], TNum, math.re, {doc: {usage: 're(1 + 2i)', description: 'Real part of a complex number.'}} );
@@ -3248,7 +3255,7 @@ newBuiltin('sign', [TNum], TNum, math.sign, {doc: {usage: 'sign(x)', description
 newBuiltin('random', [TRange], TNum, math.random, {doc: {usage: 'random(1..4)', description: 'A random number in the given range.', tags: ['choose','pick']}} );
 
 newBuiltin('random',[TList],'?',null, {
-	evaluate: function(args,scope) 
+	evaluate: function(args) 
 	{
 		return math.choose(args[0].value);
 	},
@@ -3262,7 +3269,7 @@ newBuiltin('random',[TList],'?',null, {
 
 newBuiltin( 'random',[],'?', null, {
 	typecheck: function() { return true; },
-	evaluate: function(args,scope) { return math.choose(args);},
+	evaluate: function(args) { return math.choose(args);},
 	doc: {
 		usage: 'random(1,2,3,4,5)',
 		description: 'Choose at random from the given arguments.',
@@ -3342,7 +3349,7 @@ newBuiltin('switch',[],'?', null, {
 			return false;
 
 		var check=0;
-		if(variables.length % 2 == 0)
+		if(variables.length % 2 === 0)
 			check = variables.length;
 		else
 			check = variables.length-1;
@@ -3385,7 +3392,7 @@ newBuiltin('isa',['?',TString],TBool, null, {
 	evaluate: function(args,scope)
 	{
 		var kind = jme.evaluate(args[1],scope).value;
-		if(args[0].tok.type=='name' && scope.variables[args[0].tok.name.toLowerCase()]==undefined )
+		if(args[0].tok.type=='name' && scope.variables[args[0].tok.name.toLowerCase()]===undefined )
 			return new TBool(kind=='name');
 
 		var match = false;
@@ -3427,7 +3434,7 @@ newBuiltin('repeat',['?',TNum],TList, null, {
 });
 
 newBuiltin('listval',[TList,TNum],'?', null, {
-	evaluate: function(args,scope)
+	evaluate: function(args)
 	{
 		var index = args[1].value;
 		var list = args[0];
@@ -3453,7 +3460,7 @@ newBuiltin('listval',[TList,TNum],'?', null, {
 });
 
 newBuiltin('listval',[TList,TRange],TList, null, {
-	evaluate: function(args,scope)
+	evaluate: function(args)
 	{
 		var range = args[1].value;
 		var list = args[0];
@@ -3476,7 +3483,7 @@ newBuiltin('listval',[TList,TRange],TList, null, {
 });
 
 newBuiltin('listval',[TVector,TNum],TNum, null, {
-	evaluate: function(args,scope)
+	evaluate: function(args)
 	{
 		var index = args[1].value;
 		var vector = args[0];
@@ -3491,7 +3498,7 @@ newBuiltin('listval',[TVector,TNum],TNum, null, {
 });
 
 newBuiltin('listval',[TMatrix,TNum],TVector, null, {
-	evaluate: function(args,scope)
+	evaluate: function(args)
 	{
 		var index = args[1].value;
 		var matrix = args[0];
@@ -3508,6 +3515,7 @@ newBuiltin('listval',[TMatrix,TNum],TVector, null, {
 newBuiltin('map',['?',TName,'?'],TList, null, {
 	evaluate: function(args,scope)
 	{
+		var i;
 		var list = jme.evaluate(args[2],scope);
 		switch(list.type) {
 		case 'list':
@@ -3515,7 +3523,7 @@ newBuiltin('map',['?',TName,'?'],TList, null, {
 			break;
 		case 'range':
 			list = list.value.slice(3);
-			for(var i=0;i<list.length;i++) {
+			for(i=0;i<list.length;i++) {
 				list[i] = new TNum(list[i]);
 			}
 			break;
@@ -3525,7 +3533,7 @@ newBuiltin('map',['?',TName,'?'],TList, null, {
 		var value = [];
 		var name = args[1].tok.name;
 		scope = new Scope(scope);
-		for(var i=0;i<list.length;i++)
+		for(i=0;i<list.length;i++)
 		{
 			scope.variables[name] = list[i];
 			value[i] = jme.evaluate(args[0],scope);
@@ -3562,7 +3570,7 @@ newBuiltin('map',['?',TName,TRange],TList, null, {
 });
 
 newBuiltin('sort',[TList],TList, null, {
-	evaluate: function(args,scope)
+	evaluate: function(args)
 	{
 		var list = args[0];
 		var newlist = new TList(list.vars);
@@ -3584,7 +3592,7 @@ newBuiltin('sort',[TList],TList, null, {
 });
 
 newBuiltin('vector',['*TNum'],TVector, null, {
-	evaluate: function(args,scope)
+	evaluate: function(args)
 	{
 		var value = [];
 		for(var i=0;i<args.length;i++)
@@ -3602,10 +3610,10 @@ newBuiltin('vector',['*TNum'],TVector, null, {
 });
 
 newBuiltin('vector',[TList],TVector, null, {
-	evaluate: function(args,scope)
+	evaluate: function(args)
 	{
 		var list = args[0];
-		var value = list.value.map(function(x){return x.value});
+		var value = list.value.map(function(x){return x.value;});
 		return new TVector(value);
 	},
 
@@ -3617,7 +3625,7 @@ newBuiltin('vector',[TList],TVector, null, {
 });
 
 newBuiltin('matrix',[TList],TMatrix,null, {
-	evaluate: function(args,scope)
+	evaluate: function(args)
 	{
 		var list = args[0];
 		var rows = list.vars;
@@ -3626,15 +3634,16 @@ newBuiltin('matrix',[TList],TMatrix,null, {
 		switch(list.value[0].type)
 		{
 		case 'number':
-			value = [list.value.map(function(e){return e.value})];
+			value = [list.value.map(function(e){return e.value;})];
 			rows = 1;
 			columns = list.vars;
 			break;
 		case 'list':
+			function getValue(x){ return x.value; }
 			for(var i=0;i<rows;i++)
 			{
 				var row = list.value[i].value;
-				value.push(row.map(function(x){return x.value}));
+				value.push(row.map(getValue));
 				columns = Math.max(columns,row.length);
 			}
 			break;
@@ -3654,15 +3663,16 @@ newBuiltin('matrix',[TList],TMatrix,null, {
 });
 
 newBuiltin('matrix',['*list'],TMatrix, null, {
-	evaluate: function(args,scope)
+	evaluate: function(args)
 	{
 		var rows = args.length;
 		var columns = 0;
 		var value = [];
+		function getValue(x){ return x.value; }
 		for(var i=0;i<args.length;i++)
 		{
 			var row = args[i].value;
-			value.push(row.map(function(x){return x.value}));
+			value.push(row.map(getValue));
 			columns = Math.max(columns,row.length);
 		}
 		value.rows = rows;
@@ -3678,7 +3688,7 @@ newBuiltin('matrix',['*list'],TMatrix, null, {
 });
 
 newBuiltin('rowvector',['*number'],TMatrix, null, {
-	evaluate: function(args,scope)
+	evaluate: function(args)
 	{
 		var row = [];
 		for(var i=0;i<args.length;i++)
@@ -3699,10 +3709,10 @@ newBuiltin('rowvector',['*number'],TMatrix, null, {
 });
 
 newBuiltin('rowvector',[TList],TMatrix, null, {
-	evaluate: function(args,scope)
+	evaluate: function(args)
 	{
 		var list = args[0];
-		var row = list.value.map(function(x){return x.value});
+		var row = list.value.map(function(x){return x.value;});
 		var matrix = [row];
 		matrix.rows = 1;
 		matrix.columns = row.length;
@@ -3718,10 +3728,10 @@ newBuiltin('rowvector',[TList],TMatrix, null, {
 
 //cast vector to list
 newBuiltin('list',[TVector],TList,null, {
-	evaluate: function(args,scope)
+	evaluate: function(args)
 	{
 		var vector = args[0];
-		var value = vector.value.map(function(n){ return new TNum(n)});
+		var value = vector.value.map(function(n){ return new TNum(n);});
 		return new TList(value);
 	},
 
@@ -3734,13 +3744,14 @@ newBuiltin('list',[TVector],TList,null, {
 
 //cast matrix to list of lists
 newBuiltin('list',[TMatrix],TList,null, {
-	evaluate: function(args,scope)
+	evaluate: function(args)
 	{
 		var matrix = args[0];
 		var value = [];
+		function makeTNum(n){ return new TNum(n); }
 		for(var i=0;i<matrix.value.rows;i++)
 		{
-			var row = new TList(matrix.value[i].map(function(n){return new TNum(n)}));
+			var row = new TList(matrix.value[i].map(makeTNum));
 			value.push(row);
 		}
 		return new TList(value);
@@ -3755,12 +3766,14 @@ newBuiltin('list',[TMatrix],TList,null, {
 
 newBuiltin('table',[TList,TList],THTML,
 	function(data,headers) {
+		var i;
+		var cell;
 		var table = document.createElement('table');
 
 		var thead = document.createElement('thead');
 		table.appendChild(thead);
-		for(var i=0;i<headers.length;i++) {
-			var cell = headers[i];
+		for(i=0;i<headers.length;i++) {
+			cell = headers[i];
 			if(typeof cell=='number')
 				cell = LissaJS.math.niceNumber(cell);
 			var th = document.createElement('th');
@@ -3770,11 +3783,11 @@ newBuiltin('table',[TList,TList],THTML,
 
 		var tbody = document.createElement('tbody');
 		table.appendChild(tbody);
-		for(var i=0;i<data.length;i++) {
+		for(i=0;i<data.length;i++) {
 			var row = document.createElement('tr');
 			tbody.appendChild(row);
 			for(var j=0;j<data[i].length;j++) {
-				var cell = data[i][j];
+				cell = data[i][j];
 				if(typeof cell=='number')
 					cell = LissaJS.math.niceNumber(cell);
 				var td = document.createElement('td');
@@ -3826,7 +3839,7 @@ function varnamesAgree(array1, array2) {
 	}
 	
 	return true;
-};
+}
 
 var checkingFunctions = 
 {
@@ -3844,7 +3857,7 @@ var checkingFunctions =
 			return r1===r2;
 
 		// fails if (r1/r2 - 1) is bigger than tolerance
-		if(r2!=0) {
+		if(r2!==0) {
 			return math.leq(Math.abs(math.sub(r1,r2)), Math.abs(math.mul(tolerance,r2)));
 		} else {	//or if correct answer is 0, checks abs difference
 			return math.leq(Math.abs(math.sub(r1,r2)), tolerance);
@@ -3872,6 +3885,8 @@ var checkingFunctions =
 
 var findvars = jme.findvars = function(tree,boundvars,scope)
 {
+	var i;
+
 	if(!scope)
 		scope = jme.builtinScope;
 	if(boundvars===undefined)
@@ -3897,21 +3912,22 @@ var findvars = jme.findvars = function(tree,boundvars,scope)
 		case 'string':
 			var bits = jme.texsplit(tree.tok.value);
 			var out = [];
-			for(var i=0;i<bits.length-3;i+=4)
+			for(i=0;i<bits.length-3;i+=4)
 			{
 				var cmd = bits[i+1];
 				var expr = bits[i+3];
+				var tree2;
 				switch(cmd)
 				{
 				case 'var':
-					var tree2 = jme.compile(expr,scope,true);
+					tree2 = jme.compile(expr,scope,true);
 					out = mergeArrays(out,findvars(tree2,boundvars));
 					break;
 				case 'simplify':
 					var sbits = util.splitbrackets(expr,'{','}');
-					for(var i=1;i<sbits.length-1;i+=2)
+					for(var j=1;j<sbits.length-1;j+=2)
 					{
-						var tree2 = jme.compile(sbits[i],scope,true);
+						tree2 = jme.compile(sbits[j],scope,true);
 						out = mergeArrays(out,findvars(tree2,boundvars));
 					}
 					break;
@@ -3925,16 +3941,17 @@ var findvars = jme.findvars = function(tree,boundvars,scope)
 	else
 	{
 		var vars = [];
-		for(var i=0;i<tree.args.length;i++)
+		for(i=0;i<tree.args.length;i++)
 			vars = mergeArrays(vars,findvars(tree.args[i],boundvars));
 		return vars;
 	}
-}
+};
 
 
 function resultsEqual(r1,r2,checkingFunction,checkingAccuracy)
 {	// first checks both expressions are of same type, then uses given checking type to compare results
 
+	var i,j;
 	var v1 = r1.value, v2 = r2.value;
 
 	if(r1.type != r2.type)
@@ -3960,30 +3977,28 @@ function resultsEqual(r1,r2,checkingFunction,checkingAccuracy)
 	case 'vector':
 		if(v1.length != v2.length)
 			return false;
-		for(var i=0;i<v1.length;i++)
+		for(i=0;i<v1.length;i++)
 		{
 			if(!resultsEqual(new TNum(v1[i]),new TNum(v2[i]),checkingFunction,checkingAccuracy))
 				return false;
 		}
 		return true;
-		break;
 	case 'matrix':
 		if(v1.rows != v2.rows || v1.columns != v2.columns)
 			return false;
-		for(var i=0;i<v1.rows;i++)
+		for(i=0;i<v1.rows;i++)
 		{
-			for(var j=0;j<v1.columns;j++)
+			for(j=0;j<v1.columns;j++)
 			{
 				if(!resultsEqual(new TNum(v1[i][j]||0),new TNum(v2[i][j]||0),checkingFunction,checkingAccuracy))
 					return false;
 			}
 		}
 		return true;
-		break;
 	case 'list':
 		if(v1.length != v2.length)
 			return false;
-		for(var i=0;i<v1.length;i++)
+		for(i=0;i<v1.length;i++)
 		{
 			if(!resultsEqual(v1[i],v2[i],checkingFunction,checkingAccuracy))
 				return false;
@@ -3992,10 +4007,7 @@ function resultsEqual(r1,r2,checkingFunction,checkingAccuracy)
 	default:
 		return v1 == v2;
 	}
-};
-
-var math = LissaJS.math;
-var jme = LissaJS.jme;
+}
 
 jme.display = {
 
@@ -4023,7 +4035,7 @@ jme.display = {
 	//simplify a JME expression string according to given ruleset and return it as a JME string
 	simplifyExpression: function(expr,ruleset,scope)
 	{
-		if(expr.trim()=='')
+		if(expr.trim()==='')
 			return '';
 		return treeToJME(jme.display.simplify(expr,ruleset,scope),ruleset.flags);
 	},
@@ -4031,7 +4043,7 @@ jme.display = {
 	//simplify a JME expression string according to given ruleset and return it as a syntax tree
 	simplify: function(expr,ruleset,scope)
 	{
-		if(expr.trim()=='')
+		if(expr.trim()==='')
 			return;
 
 		if(!ruleset)
@@ -4053,6 +4065,8 @@ jme.display = {
 	//simplify a syntax tree according to given ruleset
 	simplifyTree: function(exprTree,ruleset,scope)
 	{
+		var i;
+
 		if(!scope)
 			throw(new LissaJS.Error('jme.display.simplifyTree.no scope given'));
 		scope = LissaJS.util.copyobj(scope);
@@ -4073,13 +4087,13 @@ jme.display = {
 			{
 				if(exprTree.args)	//if this token is an operation with arguments, try to simplify the arguments first
 				{
-					for(var i=0;i<exprTree.args.length;i++)
+					for(i=0;i<exprTree.args.length;i++)
 					{
 						exprTree.args[i] = jme.display.simplifyTree(exprTree.args[i],ruleset,scope);
 					}
 				}
 				applied = false;
-				for( var i=0; i<rules.length;i++)	//check each rule
+				for(i=0; i<rules.length;i++)	//check each rule
 				{
 					var match;
 					if(match = rules[i].match(exprTree,scope))	//if rule can be applied, apply it!
@@ -4091,7 +4105,7 @@ jme.display = {
 				}
 			}
 		}
-		return exprTree
+		return exprTree;
 	}
 };
 
@@ -4126,7 +4140,7 @@ function texifyOpArg(thing,texArgs,i)
 	else if(thing.args[i].tok.type=='number' && thing.args[i].tok.value.complex && thing.tok.type=='op' && (thing.tok.name=='*' || thing.tok.name=='-u') )	
 	{
 		var v = thing.args[i].tok.value;
-		if(!(v.re==0 || v.im==0))
+		if(!(v.re===0 || v.im===0))
 			tex = '\\left ( '+tex+' \\right )';
 	}
 	return tex;
@@ -4148,14 +4162,14 @@ function infixTex(code)
 		{
 			return texArgs[0]+' '+code+' '+texArgs[1];
 		}
-	}
+	};
 }
 
 //helper for texing nullary functions
 //returns a function which returns the appropriate (constant) code
 function nullaryTex(code)
 {
-	return function(thing,texArgs){ return '\\textrm{'+code+'}'; };
+	return function(){ return '\\textrm{'+code+'}'; };
 }
 
 //helper function for texing functions
@@ -4164,7 +4178,7 @@ function funcTex(code)
 	return function(thing,texArgs)
 	{
 		return code+' \\left ( '+texArgs.join(', ')+' \\right )';
-	}
+	};
 }
 
 // define how to texify each operation and function
@@ -4258,9 +4272,8 @@ var texOps = jme.display.texOps = {
 	'/': (function(thing,texArgs) { return ('\\frac{ '+texArgs[0]+' }{ '+texArgs[1]+' }'); }),
 	'+': infixTex('+'),
 	'-': (function(thing,texArgs,settings) {
-		var a = thing.args[0];
 		var b = thing.args[1];
-		if(b.tok.type=='number' && b.tok.value.complex && b.tok.value.re!=0) {
+		if(b.tok.type=='number' && b.tok.value.complex && b.tok.value.re!==0) {
 			var texb = settings.texNumber(math.complex(b.tok.value.re,-b.tok.value.im));
 			return texArgs[0]+' - '+texb;
 		}
@@ -4400,7 +4413,7 @@ var texOps = jme.display.texOps = {
 	'arcsinh': funcTex('\\operatorname{arcsinh}'),
 	'arccosh': funcTex('\\operatorname{arccosh}'),
 	'arctanh': funcTex('\\operatorname{arctanh}'),
-	'ln': function(thing,texArgs,settings) {
+	'ln': function(thing,texArgs) {
 		if(thing.args[0].tok.type=='function' && thing.args[0].tok.name=='abs')
 			return '\\ln '+texArgs[0];
 		else
@@ -4422,10 +4435,10 @@ var texOps = jme.display.texOps = {
 	'listval': (function(thing,texArgs) {
 		return texArgs[0]+' \\left['+texArgs[1]+'\\right]';
 	}),
-	'verbatim': (function(thing,texArgs) {
+	'verbatim': (function(thing) {
 		return thing.args[0].tok.value;
 	})
-}
+};
 
 function texRationalNumber(n)
 {
@@ -4433,9 +4446,9 @@ function texRationalNumber(n)
 	{
 		var re = texRationalNumber(n.re);
 		var im = texRationalNumber(n.im)+' i';
-		if(n.im==0)
+		if(n.im===0)
 			return re;
-		else if(n.re==0)
+		else if(n.re===0)
 		{
 			if(n.im==1)
 				return 'i';
@@ -4502,9 +4515,9 @@ function texRealNumber(n)
 	{
 		var re = texRealNumber(n.re);
 		var im = texRealNumber(n.im)+' i';
-		if(n.im==0)
+		if(n.im===0)
 			return re;
-		else if(n.re==0)
+		else if(n.re===0)
 		{
 			if(n.im==1)
 				return 'i';
@@ -4560,6 +4573,7 @@ function texRealNumber(n)
 				return '\\pi';
 			else
 				return out+' \\pi';
+			break;
 		default:
 			if(n==1)
 				return '\\pi^{'+piD+'}';
@@ -4575,12 +4589,12 @@ function texVector(v,settings)
 	var elements;
 	if(v.args)
 	{
-		elements = v.args.map(function(x){return texify(x,settings)});
+		elements = v.args.map(function(x){return texify(x,settings);});
 	}
 	else
 	{
 		var texNumber = settings.fractionnumbers ? texRationalNumber : texRealNumber;
-		elements = v.map(function(x){return texNumber(x)});
+		elements = v.map(function(x){return texNumber(x);});
 	}
 	if(settings.rowvector)
 		out = elements.join(' , ');
@@ -4592,18 +4606,19 @@ function texVector(v,settings)
 function texMatrix(m,settings,parens)
 {
 	var out;
+	var rows;
 
 	if(m.args)
 	{
-		var rows = m.args.map(function(x) {
+		rows = m.args.map(function(x) {
 			return x.args.map(function(y){ return texify(y,settings); });
-		})
+		});
 	}
 	else
 	{
 		var texNumber = settings.fractionnumbers ? texRationalNumber : texRealNumber;
-		var rows = m.map(function(x){
-			return x.map(function(y){ return texNumber(y) });
+		rows = m.map(function(x){
+			return x.map(function(y){ return texNumber(y); });
 		});
 	}
 
@@ -4625,7 +4640,7 @@ function texMatrix(m,settings,parens)
 
 function texName(name,annotation)
 {
-	var name = greek.contains(name) ? '\\'+name : name;
+	name = greek.contains(name) ? '\\'+name : name;
 	name = name.replace(/(.*)_(.*)('*)$/g,'$1_{$2}$3');	//make numbers at the end of a variable name subscripts
 	name = name.replace(/^(.*?[^_])(\d+)('*)$/,'$1_{$2}$3');	//make numbers at the end of a variable name subscripts
 	if(!annotation)
@@ -4664,20 +4679,22 @@ function texName(name,annotation)
 	return name;
 }
 
-var greek = ['alpha','beta','gamma','delta','epsilon','zeta','eta','theta','iota','kappa','lambda','mu','nu','xi','omicron','pi','rho','sigma','tau','upsilon','phi','chi','psi','omega']
+var greek = ['alpha','beta','gamma','delta','epsilon','zeta','eta','theta','iota','kappa','lambda','mu','nu','xi','omicron','pi','rho','sigma','tau','upsilon','phi','chi','psi','omega'];
 
 var texify = LissaJS.jme.display.texify = function(thing,settings)
 {
+	var i;
+
 	if(!thing)
 		return '';
 
 	if(!settings)
 		settings = {};
 
+	var texArgs = [];
 	if(thing.args)
 	{
-		var texArgs = [];
-		for(var i=0; i<thing.args.length; i++ )
+		for(i=0; i<thing.args.length; i++ )
 		{
 			texArgs[i] = texify(thing.args[i],settings);
 		}
@@ -4703,15 +4720,13 @@ var texify = LissaJS.jme.display.texify = function(thing,settings)
 		break;
 	case 'boolean':
 		return tok.value ? 'true' : 'false';
-		break;
 	case 'range':
 		return tok.value[0]+ ' \\dots '+tok.value[1];
-		break;
 	case 'list':
 		if(!texArgs)
 		{
 			texArgs = [];
-			for(var i=0;i<tok.vars;i++)
+			for(i=0;i<tok.vars;i++)
 			{
 				texArgs[i] = texify(tok.value[i],settings);
 			}
@@ -4725,16 +4740,12 @@ var texify = LissaJS.jme.display.texify = function(thing,settings)
 		return '\\left( '+texMatrix(tok.value,settings)+' \\right)';
 	case 'name':
 		return texName(tok.name,tok.annotation);
-		break;
 	case 'special':
 		return tok.value;
-		break;
 	case 'conc':
 		return texArgs.join(' ');
-		break;
 	case 'op':
 		return texOps[tok.name.toLowerCase()](thing,texArgs,settings);
-		break;
 	case 'function':
 		if(texOps[tok.name.toLowerCase()])
 		{
@@ -4742,10 +4753,11 @@ var texify = LissaJS.jme.display.texify = function(thing,settings)
 		}
 		else
 		{
+			var texname;
 			if(tok.name.replace(/[^A-Za-z]/g,'').length==1)
-				var texname=tok.name;
+				texname=tok.name;
 			else
-				var texname='\\operatorname{'+tok.name+'}';
+				texname='\\operatorname{'+tok.name+'}';
 
 			return texName(texname,tok.annotation)+' \\left ( '+texArgs.join(', ')+' \\right )';
 		}
@@ -4753,7 +4765,7 @@ var texify = LissaJS.jme.display.texify = function(thing,settings)
 	default:
 		throw(new LissaJS.Error('jme.display.unknown token type',tok.type));
 	}
-}
+};
 
 function jmeRationalNumber(n)
 {
@@ -4761,9 +4773,9 @@ function jmeRationalNumber(n)
 	{
 		var re = jmeRationalNumber(n.re);
 		var im = jmeRationalNumber(n.im)+'i';
-		if(n.im==0)
+		if(n.im===0)
 			return re;
-		else if(n.re==0)
+		else if(n.re===0)
 		{
 			if(n.im==1)
 				return 'i';
@@ -4836,9 +4848,9 @@ function jmeRealNumber(n)
 		else
 			im += 'i';
 
-		if(n.im==0)
+		if(n.im===0)
 			return re;
-		else if(n.re==0)
+		else if(n.re===0)
 		{
 			if(n.im==1)
 				return 'i';
@@ -4895,6 +4907,7 @@ function jmeRealNumber(n)
 				return 'pi';
 			else
 				return out+' pi';
+			break;
 		default:
 			if(n==1)
 				return 'pi^'+piD;
@@ -4916,9 +4929,10 @@ var treeToJME = jme.display.treeToJME = function(tree,settings)
 
 	var args=tree.args, l;
 
+	var bits;
 	if(args!==undefined && ((l=args.length)>0))
 	{
-		var bits = args.map(function(i){return treeToJME(i,settings)});
+		bits = args.map(function(i){return treeToJME(i,settings);});
 	}
 
     var jmeNumber = settings.fractionnumbers ? jmeRationalNumber : jmeRealNumber;
@@ -4959,7 +4973,7 @@ var treeToJME = jme.display.treeToJME = function(tree,settings)
 		return 'vector('+tok.value.map(jmeNumber).join(',')+')';
 	case 'matrix':
 		return 'matrix('+
-			tok.value.map(function(row){return '['+row.map(jmeNumber).join(',')+']'}).join(',')+')';
+			tok.value.map(function(row){return '['+row.map(jmeNumber).join(',')+']';}).join(',')+')';
 	case 'special':
 		return tok.value;
 	case 'conc':
@@ -4971,14 +4985,14 @@ var treeToJME = jme.display.treeToJME = function(tree,settings)
 
 		for(var i=0;i<l;i++)
 		{
-			if(args[i].tok.type=='op' && opBrackets[op][i][args[i].tok.name]==true)
+			if(args[i].tok.type=='op' && opBrackets[op][i][args[i].tok.name]===true)
 			{
 				bits[i]='('+bits[i]+')';
 				args[i].bracketed=true;
 			}
 			else if(args[i].tok.type=='number' && args[i].tok.value.complex && (op=='*' || op=='-u' || op=='/'))
 			{
-				if(!(args[i].tok.value.re==0 || args[i].tok.value.im==0))
+				if(!(args[i].tok.value.re===0 || args[i].tok.value.im===0))
 				{
 					bits[i] = '('+bits[i]+')';
 					args[i].bracketed = true;
@@ -5009,7 +5023,7 @@ var treeToJME = jme.display.treeToJME = function(tree,settings)
 			break;
 		case '-':
 			var b = args[1].tok.value;
-			if(args[1].tok.type=='number' && args[1].tok.value.complex && args[1].tok.value.re!=0) {
+			if(args[1].tok.type=='number' && args[1].tok.value.complex && args[1].tok.value.re!==0) {
 				return bits[0]+' - '+jmeNumber(math.complex(b.re,-b.im));
 			}
 			op = ' - ';
@@ -5030,7 +5044,7 @@ var treeToJME = jme.display.treeToJME = function(tree,settings)
 		else
 			{return bits[0]+op+bits[1];}
 	}
-}
+};
 
 //does each argument (of an operation) need brackets around it?
 //arrays consisting of one object for each argument of the operation
@@ -5060,14 +5074,14 @@ var Rule = jme.display.Rule = function(pattern,conditions,result)
 	{
 		this.conditions.push(jme.compile(conditions[i],{},true));
 	}
-}
+};
 
 Rule.prototype = {
 	match: function(exprTree,scope)
 	{
 		//see if expression matches rule
 		var match = matchTree(this.tree,exprTree);
-		if(match==false)
+		if(match===false)
 			return false;
 
 		//if expression matches rule, then match is a dictionary of matched variables
@@ -5087,7 +5101,7 @@ Rule.prototype = {
 			try
 			{
 				var result = jme.evaluate(c,scope);
-				if(result.value==false)
+				if(result.value===false)
 					return false;
 			}
 			catch(e)
@@ -5097,7 +5111,7 @@ Rule.prototype = {
 		}
 		return true;
 	}
-}
+};
 
 
 function matchTree(ruleTree,exprTree)
@@ -5144,7 +5158,7 @@ function matchTree(ruleTree,exprTree)
 		for(var i=0;i<ruleTree.args.length;i++)
 		{
 			var m = matchTree(ruleTree.args[i],exprTree.args[i]);
-			if(m==false)
+			if(m===false)
 				return false;
 			else
 			{
@@ -5154,7 +5168,7 @@ function matchTree(ruleTree,exprTree)
 				}
 			}
 		}
-		return d
+		return d;
 	default:
 		return d;
 	}
@@ -5294,7 +5308,7 @@ var compileRules = jme.display.compileRules = function(rules)
 		rules[i] = new Rule(pattern,conditions,result);
 	}
 	return new jme.Ruleset(rules,{});
-}
+};
 
 var all=[];
 var nsimplificationRules = LissaJS.jme.display.simplificationRules = {};
@@ -5304,7 +5318,7 @@ for(var x in simplificationRules)
 	all = all.concat(nsimplificationRules[x].rules);
 }
 simplificationRules = nsimplificationRules;
-simplificationRules['all']=new jme.Ruleset(all,{});
+simplificationRules['all'] = new jme.Ruleset(all,{});
 LissaJS.jme.builtinScope = new LissaJS.jme.Scope([LissaJS.jme.builtinScope,{rulesets: simplificationRules}]);
 
 return LissaJS;
