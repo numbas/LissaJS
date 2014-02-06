@@ -47,3 +47,22 @@ To simplify (rearrange) an expression:
     LissaJS.jme.display.simplifyExpression('expression',[rules],[scope]);
     
 There are lots of pure maths functions under `LissaJS.math`.
+
+Copyright
+---------
+
+> Copyright 2011-14 Newcastle University
+> 
+> Licensed under the Apache License, Version 2.0 (the "License");
+> you may not use this file except in compliance with the License.
+> You may obtain a copy of the License at
+> 
+> http://www.apache.org/licenses/LICENSE-2.0
+> 
+> Unless required by applicable law or agreed to in writing, software
+> distributed under the License is distributed on an "AS IS" BASIS,
+> WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+> See the License for the specific language governing permissions and
+> limitations under the License.
+
+You can see a plain-English explanation of the license and what it allows at [tl;drLegal](https://tldrlegal.com/license/apache-license-2.0-(apache-2.0))
