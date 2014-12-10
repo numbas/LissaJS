@@ -1,0 +1,24 @@
+{
+  "name": "lissajs",
+  "version": "1.0.0",
+  "homepage": "http://numbas.github.io/LissaJS/",
+  "description": "An algebra parsing, evaluation and simplification system written entirely in JavaScript.",
+  "main": "lissajs.js",
+  "keywords": [
+    "algebra",
+    "simplification",
+    "javascript",
+    "parsing"
+  ],
+  "authors": [
+    "christianp"
+  ],
+  "license": "APACHE 2.0",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
