@@ -1,11 +1,12 @@
 $.fn.mathjax = function(latex) {
-	var math = $('<script type="math/tex; mode=display"/>');
-	math.html(latex);
+    var script = document.createElement('script');
+    script.setAttribute('type','math/tex; mode=display');
+    script.innerHTML = latex;
 	$(this)
 		.html('')
-		.append(math)
+		.append(script)
 	;
-	MathJax.Hub.Queue(['Typeset',MathJax.Hub,math[0]]);
+	MathJax.Hub.Queue(['Typeset',MathJax.Hub,$(this)[0]]);
 }
 
 $(document).ready(function() {
